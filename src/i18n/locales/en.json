@@ -1,0 +1,86 @@
+{
+  "header": {
+    "postItem": "+ Post Item",
+    "language": "English"
+  },
+  "home": {
+    "searchPlaceholder": "Search items...",
+    "noListings": "No items found. Be the first to post!",
+    "loadMore": "Load more",
+    "sold": "SOLD"
+  },
+  "categories": {
+    "all": "All",
+    "electronics": "📱 Electronics",
+    "books": "📚 Books",
+    "clothing": "👕 Clothing",
+    "furniture": "🪑 Furniture",
+    "food": "🍎 Food",
+    "other": "🔧 Other"
+  },
+  "sort": {
+    "newest": "Newest first",
+    "priceAsc": "Price: Low to High",
+    "priceDesc": "Price: High to Low"
+  },
+  "details": {
+    "contactWhatsApp": "💬 Contact on WhatsApp",
+    "markSold": "Mark as Sold",
+    "reportListing": "Report listing",
+    "share": "Share",
+    "seller": "Seller Info",
+    "room": "Room",
+    "whatsappMessage": "Hi! I saw your listing '{{title}}' on Gadorm for {{price}} KZT. Is it still available?",
+    "markSoldConfirm": "Are you sure you want to mark this as sold?",
+    "updateFail": "Failed to update status.",
+    "notFound": "Listing not found",
+    "linkCopied": "Link copied!"
+  },
+  "post": {
+    "step1": "Photos & Basic Info",
+    "step2": "Details & Contact",
+    "step3": "Preview & Submit",
+    "uploadPhoto": "Tap to upload photos (Max 3)",
+    "title": "Title",
+    "titlePlaceholder": "What are you selling?",
+    "price": "Price (KZT)",
+    "pricePlaceholder": "0 for free items",
+    "condition": "Condition",
+    "conditions": {
+      "new": "New",
+      "likeNew": "Like New",
+      "good": "Good",
+      "fair": "Fair"
+    },
+    "description": "Description (Optional)",
+    "firstName": "Your first name",
+    "whatsappNumber": "WhatsApp number",
+    "whatsappNote": "This number will be shown to buyers.",
+    "publish": "Publish Listing",
+    "success": "Listing published successfully!",
+    "shareWhatsApp": "Share to Group",
+    "photosLimit": "Photos ({{count}}/3)",
+    "maxPhotosAlert": "Maximum 3 photos allowed.",
+    "failAlert": "Failed to publish listing. Please try again.",
+    "successDesc": "Your item is now live and visible to everyone.",
+    "viewListing": "View Listing",
+    "descPlaceholder": "Condition details, reason for selling, etc.",
+    "next": "Next",
+    "preview": "Preview",
+    "publishing": "Publishing...",
+    "categoryLabel": "Category"
+  },
+  "report": {
+    "title": "Report Listing",
+    "reason": "Reason",
+    "note": "Additional note (optional)",
+    "submit": "Submit Report",
+    "success": "Report submitted.",
+    "reasonSpam": "Spam / Fake",
+    "reasonInappropriate": "Inappropriate content",
+    "reasonSold": "Already sold",
+    "reasonOther": "Other",
+    "cancel": "Cancel",
+    "submitBtn": "Submit"
+  }
+}

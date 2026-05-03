@@ -1,0 +1,86 @@
+{
+  "header": {
+    "postItem": "+ Разместить",
+    "language": "Русский"
+  },
+  "home": {
+    "searchPlaceholder": "Поиск товаров...",
+    "noListings": "Ничего не найдено. Станьте первым!",
+    "loadMore": "Загрузить еще",
+    "sold": "ПРОДАНО"
+  },
+  "categories": {
+    "all": "Все",
+    "electronics": "📱 Электроника",
+    "books": "📚 Книги",
+    "clothing": "👕 Одежда",
+    "furniture": "🪑 Мебель",
+    "food": "🍎 Еда",
+    "other": "🔧 Другое"
+  },
+  "sort": {
+    "newest": "Сначала новые",
+    "priceAsc": "Сначала дешевые",
+    "priceDesc": "Сначала дорогие"
+  },
+  "details": {
+    "contactWhatsApp": "💬 Написать в WhatsApp",
+    "markSold": "Отметить как проданное",
+    "reportListing": "Пожаловаться",
+    "share": "Поделиться",
+    "seller": "Информация о продавце",
+    "room": "Комната",
+    "whatsappMessage": "Привет! Я увидел(а) ваше объявление '{{title}}' в Gadorm за {{price}} KZT. Оно еще актуально?",
+    "markSoldConfirm": "Вы уверены, что хотите отметить как проданное?",
+    "updateFail": "Ошибка обновления статуса.",
+    "notFound": "Объявление не найдено",
+    "linkCopied": "Ссылка скопирована!"
+  },
+  "post": {
+    "step1": "Фото и Информация",
+    "step2": "Детали и Контакты",
+    "step3": "Просмотр и Публикация",
+    "uploadPhoto": "Нажмите, чтобы загрузить фото (Макс 3)",
+    "title": "Название",
+    "titlePlaceholder": "Что вы продаете?",
+    "price": "Цена (KZT)",
+    "pricePlaceholder": "0 если бесплатно",
+    "condition": "Состояние",
+    "conditions": {
+      "new": "Новое",
+      "likeNew": "Как новое",
+      "good": "Хорошее",
+      "fair": "Удовлетворительное"
+    },
+    "description": "Описание (Необязательно)",
+    "firstName": "Ваше имя",
+    "whatsappNumber": "Номер WhatsApp",
+    "whatsappNote": "Этот номер увидят покупатели.",
+    "publish": "Опубликовать объявление",
+    "success": "Объявление успешно опубликовано!",
+    "shareWhatsApp": "Поделиться в группе",
+    "photosLimit": "Фото ({{count}}/3)",
+    "maxPhotosAlert": "Максимум 3 фото.",
+    "failAlert": "Ошибка публикации. Попробуйте еще раз.",
+    "successDesc": "Ваше объявление теперь активно и видно всем.",
+    "viewListing": "Посмотреть объявление",
+    "descPlaceholder": "Детали состояния, причина продажи и т.д.",
+    "next": "Далее",
+    "preview": "Предпросмотр",
+    "publishing": "Публикация...",
+    "categoryLabel": "Категория"
+  },
+  "report": {
+    "title": "Пожаловаться",
+    "reason": "Причина",
+    "note": "Дополнительный комментарий",
+    "submit": "Отправить",
+    "success": "Жалоба отправлена.",
+    "reasonSpam": "Спам / Фейк",
+    "reasonInappropriate": "Неприемлемый контент",
+    "reasonSold": "Уже продано",
+    "reasonOther": "Другое",
+    "cancel": "Отмена",
+    "submitBtn": "Отправить"
+  }
+}

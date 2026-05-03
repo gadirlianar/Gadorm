@@ -1,0 +1,86 @@
+{
+  "header": {
+    "postItem": "+ Жарнама қосу",
+    "language": "Қазақша"
+  },
+  "home": {
+    "searchPlaceholder": "Тауарларды іздеу...",
+    "noListings": "Ештеңе табылмады. Бірінші болып қосыңыз!",
+    "loadMore": "Тағы жүктеу",
+    "sold": "САТЫЛДЫ"
+  },
+  "categories": {
+    "all": "Барлығы",
+    "electronics": "📱 Электроника",
+    "books": "📚 Кітаптар",
+    "clothing": "👕 Киім",
+    "furniture": "🪑 Жиһаз",
+    "food": "🍎 Тамақ",
+    "other": "🔧 Басқа"
+  },
+  "sort": {
+    "newest": "Жаңалары",
+    "priceAsc": "Арзаннан бастап",
+    "priceDesc": "Қымбаттан бастап"
+  },
+  "details": {
+    "contactWhatsApp": "💬 WhatsApp-қа жазу",
+    "markSold": "Сатылды деп белгілеу",
+    "reportListing": "Шағымдану",
+    "share": "Бөлісу",
+    "seller": "Сатушы туралы",
+    "room": "Бөлме",
+    "whatsappMessage": "Сәлем! Мен Gadorm-дан '{{title}}' деген жарнамаңызды {{price}} KZT көрдім. Әлі сатылымда ма?",
+    "markSoldConfirm": "Сатылды деп белгілеуге сенімдісіз бе?",
+    "updateFail": "Мәртебені жаңарту қатесі.",
+    "notFound": "Жарнама табылмады",
+    "linkCopied": "Сілтеме көшірілді!"
+  },
+  "post": {
+    "step1": "Фото және Ақпарат",
+    "step2": "Мәліметтер мен Байланыс",
+    "step3": "Қарап шығу және Жариялау",
+    "uploadPhoto": "Фото жүктеу үшін басыңыз (Макс 3)",
+    "title": "Атауы",
+    "titlePlaceholder": "Не сатып жатырсыз?",
+    "price": "Бағасы (KZT)",
+    "pricePlaceholder": "Тегін болса 0 жазыңыз",
+    "condition": "Жағдайы",
+    "conditions": {
+      "new": "Жаңа",
+      "likeNew": "Жаңа сияқты",
+      "good": "Жақсы",
+      "fair": "Қанағаттанарлық"
+    },
+    "description": "Сипаттамасы (Міндетті емес)",
+    "firstName": "Атыңыз",
+    "whatsappNumber": "WhatsApp нөмірі",
+    "whatsappNote": "Бұл нөмірді сатып алушылар көреді.",
+    "publish": "Жариялау",
+    "success": "Жарнама сәтті жарияланды!",
+    "shareWhatsApp": "Топта бөлісу",
+    "photosLimit": "Фото ({{count}}/3)",
+    "maxPhotosAlert": "Ең көбі 3 фото рұқсат етіледі.",
+    "failAlert": "Жариялау қатесі. Қайта көріңіз.",
+    "successDesc": "Сіздің жарнамаңыз енді бәріне көрінеді.",
+    "viewListing": "Жарнаманы көру",
+    "descPlaceholder": "Жағдайы, сату себебі және т.б.",
+    "next": "Келесі",
+    "preview": "Қарап шығу",
+    "publishing": "Жариялануда...",
+    "categoryLabel": "Категория"
+  },
+  "report": {
+    "title": "Шағымдану",
+    "reason": "Себебі",
+    "note": "Қосымша пікір",
+    "submit": "Жіберу",
+    "success": "Шағым жіберілді.",
+    "reasonSpam": "Спам / Фейк",
+    "reasonInappropriate": "Орынсыз мазмұн",
+    "reasonSold": "Қазірдің өзінде сатылған",
+    "reasonOther": "Басқа",
+    "cancel": "Бас тарту",
+    "submitBtn": "Жіберу"
+  }
+}
