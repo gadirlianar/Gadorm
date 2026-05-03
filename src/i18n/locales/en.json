@@ -1,6 +1,6 @@
 {
   "header": {
-    "postItem": "+ Post Item",
+    "postItem": "Post Item",
     "language": "English"
   },
   "home": {
@@ -32,6 +32,8 @@
     "room": "Room",
     "whatsappMessage": "Hi! I saw your listing '{{title}}' on Gadorm for {{price}} KZT. Is it still available?",
     "markSoldConfirm": "Are you sure you want to mark this as sold?",
+    "delete": "Delete Listing",
+    "deleteConfirm": "Are you sure you want to completely delete this listing?",
     "updateFail": "Failed to update status.",
     "notFound": "Listing not found",
     "linkCopied": "Link copied!"

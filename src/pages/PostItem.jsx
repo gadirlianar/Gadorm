@@ -235,7 +235,7 @@ export default function PostItem() {
                           <img src={url} alt="preview" className="w-full h-full object-cover" />
                           <button 
                             onClick={() => removePhoto(i)}
-                            className="absolute top-1 right-1 bg-background/80 text-white p-1 rounded-full hover:bg-error transition-colors"
+                            className="absolute top-1 right-1 bg-textMain/80 text-surface p-1 rounded-full hover:bg-error hover:text-white transition-colors"
                           >
                             <X size={14} />
                           </button>

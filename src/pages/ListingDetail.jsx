@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { doc, getDoc, updateDoc, addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, addDoc, collection, serverTimestamp, deleteDoc } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatDistanceToNow } from 'date-fns';
@@ -57,6 +57,17 @@ export default function ListingDetail() {
       setItem(prev => ({ ...prev, status: 'sold' }));
     } catch (error) {
       console.error("Error updating status:", error);
+      alert(t('details.updateFail'));
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm(t('details.deleteConfirm'))) return;
+    try {
+      await deleteDoc(doc(db, 'listings', id));
+      navigate('/');
+    } catch (error) {
+      console.error("Error deleting listing:", error);
       alert(t('details.updateFail'));
     }
   };
@@ -137,13 +148,13 @@ export default function ListingDetail() {
               <>
                 <button 
                   onClick={() => setActivePhoto(p => p === 0 ? item.photos.length - 1 : p - 1)}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-background/50 hover:bg-background/80 text-white rounded-full backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-textMain/40 hover:bg-textMain/60 text-surface rounded-full backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity z-10"
                 >
                   <ChevronLeft size={20} />
                 </button>
                 <button 
                   onClick={() => setActivePhoto(p => p === item.photos.length - 1 ? 0 : p + 1)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-background/50 hover:bg-background/80 text-white rounded-full backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-textMain/40 hover:bg-textMain/60 text-surface rounded-full backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity z-10"
                 >
                   <ChevronRight size={20} />
                 </button>
@@ -212,6 +223,15 @@ export default function ListingDetail() {
             className="w-full bg-surface border border-border hover:border-primary text-textMain py-4 rounded-xl font-bold transition-all"
           >
             {t('details.markSold')}
+          </button>
+        )}
+
+        {isOwner && (
+          <button 
+            onClick={handleDelete}
+            className="w-full bg-error/10 hover:bg-error/20 text-error border border-error/20 py-4 rounded-xl font-bold transition-all"
+          >
+            {t('details.delete')}
           </button>
         )}
         

@@ -184,8 +184,8 @@ export default function Home() {
             className={clsx(
               "whitespace-nowrap px-5 py-2 rounded-full font-medium text-sm transition-all border",
               activeCategory === cat 
-                ? "bg-primary text-white border-primary shadow-md shadow-primary/20" 
-                : "bg-surface text-textMuted border-border hover:border-textMuted"
+                ? "bg-gradient-to-r from-primary to-accent text-white border-transparent shadow-glow" 
+                : "bg-surface text-textMuted border-white/5 hover:border-white/20"
             )}
           >
             {t(`categories.${cat}`)}
