@@ -169,31 +169,32 @@ export default function PostItem() {
     <div className="max-w-xl mx-auto">
       {successId ? (
         <motion.div 
-          initial={{ opacity: 0, scale: 0.9 }}
+          initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="bg-surface border border-border rounded-2xl p-8 text-center flex flex-col items-center shadow-card shadow-primary/10"
+          transition={{ type: 'spring', damping: 20, stiffness: 200 }}
+          className="bg-white rounded-2xl p-8 text-center flex flex-col items-center shadow-card"
         >
-          <div className="w-20 h-20 bg-primary/20 text-primary rounded-full flex items-center justify-center mb-6">
-            <CheckCircle2 size={48} />
+          <div className="w-16 h-16 bg-success/10 text-success rounded-2xl flex items-center justify-center mb-6">
+            <CheckCircle2 size={36} strokeWidth={1.5} />
           </div>
-          <h2 className="text-2xl font-display font-bold text-textMain mb-2">{t('post.success')}</h2>
-          <p className="text-textMuted mb-8">{t('post.successDesc')}</p>
+          <h2 className="text-xl font-bold text-textMain mb-2">{t('post.success')}</h2>
+          <p className="text-sm text-textMuted mb-8">{t('post.successDesc')}</p>
           
-          <div className="flex flex-col sm:flex-row gap-4 w-full">
+          <div className="flex flex-col sm:flex-row gap-3 w-full">
             <button 
               onClick={() => {
                 const url = `${window.location.origin}/item/${successId}`;
                 const text = `Check out my listing on DormBazar: ${title}\n${url}`;
                 window.location.href = `https://wa.me/?text=${encodeURIComponent(text)}`;
               }}
-              className="flex-1 flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5c] text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-[#25D366]/20 active:scale-95"
+              className="flex-1 flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5c] text-white px-5 py-3 rounded-xl font-semibold text-sm transition-all duration-300 shadow-sm active:scale-[0.97]"
             >
-              <Share2 size={20} />
+              <Share2 size={18} />
               {t('post.shareWhatsApp')}
             </button>
             <button 
               onClick={() => navigate(`/item/${successId}`)}
-              className="flex-1 bg-surfaceHover hover:bg-border text-textMain px-6 py-3 rounded-xl font-bold transition-colors"
+              className="flex-1 bg-surfaceHover hover:bg-surfaceActive text-textSecondary px-5 py-3 rounded-xl font-semibold text-sm transition-colors duration-200"
             >
               {t('post.viewListing')}
             </button>
@@ -202,19 +203,19 @@ export default function PostItem() {
       ) : (
         <>
           {/* Progress Bar */}
-          <div className="flex gap-2 mb-8">
+          <div className="flex gap-2 mb-6">
             {[1, 2, 3].map(i => (
               <div 
                 key={i} 
                 className={clsx(
-                  "h-1.5 flex-1 rounded-full transition-colors duration-500",
-                  step >= i ? "bg-primary" : "bg-surfaceHover"
+                  "h-1 flex-1 rounded-full transition-all duration-500",
+                  step >= i ? "bg-primary" : "bg-border"
                 )}
               />
             ))}
           </div>
 
-          <div className="bg-surface border border-border rounded-2xl p-4 sm:p-6 lg:p-8 shadow-card overflow-hidden">
+          <div className="bg-white rounded-2xl p-5 sm:p-6 lg:p-8 shadow-card overflow-hidden">
             <AnimatePresence mode="wait">
               {step === 1 && (
                 <motion.div 
@@ -222,31 +223,34 @@ export default function PostItem() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
-                  className="flex flex-col gap-6"
+                  transition={{ duration: 0.25 }}
+                  className="flex flex-col gap-5"
                 >
-                  <h2 className="text-xl font-display font-bold">{t('post.step1')}</h2>
+                  <h2 className="text-lg font-bold text-textMain">{t('post.step1')}</h2>
                   
                   {/* Photos */}
                   <div>
-                    <label className="block text-sm font-medium text-textMuted mb-2">{t('post.photosLimit', { count: photos.length })}</label>
+                    <label className="block text-xs font-medium text-textMuted uppercase tracking-wider mb-2.5">
+                      {t('post.photosLimit', { count: photos.length })}
+                    </label>
                     <div className="flex gap-3 overflow-x-auto pb-2">
                       {photoPreviews.map((url, i) => (
-                        <div key={i} className="relative w-24 h-24 shrink-0 rounded-xl overflow-hidden border border-border">
+                        <div key={i} className="relative w-24 h-24 shrink-0 rounded-xl overflow-hidden shadow-card">
                           <img src={url} alt="preview" className="w-full h-full object-cover" />
                           <button 
                             onClick={() => removePhoto(i)}
-                            className="absolute top-1 right-1 bg-textMain/80 text-surface p-1 rounded-full hover:bg-error hover:text-white transition-colors"
+                            className="absolute top-1.5 right-1.5 bg-black/50 text-white p-1 rounded-lg hover:bg-error transition-colors duration-200"
                           >
-                            <X size={14} />
+                            <X size={12} />
                           </button>
                         </div>
                       ))}
                       {photos.length < 3 && (
                         <button 
                           onClick={() => fileInputRef.current?.click()}
-                          className="w-24 h-24 shrink-0 rounded-xl border-2 border-dashed border-border hover:border-primary text-textMuted hover:text-primary flex flex-col items-center justify-center gap-1 transition-colors"
+                          className="w-24 h-24 shrink-0 rounded-xl border-2 border-dashed border-border hover:border-accent text-textMuted hover:text-accent flex flex-col items-center justify-center gap-1 transition-all duration-200"
                         >
-                          <Upload size={24} />
+                          <Upload size={20} strokeWidth={1.5} />
                         </button>
                       )}
                     </div>
@@ -262,8 +266,9 @@ export default function PostItem() {
 
                   {/* Title */}
                   <div>
-                    <label className="block text-sm font-medium text-textMuted mb-2">
-                      {t('post.title')} <span className="text-xs text-textMuted/50 float-right">{title.length}/60</span>
+                    <label className="flex items-center justify-between text-xs font-medium text-textMuted uppercase tracking-wider mb-2">
+                      <span>{t('post.title')}</span>
+                      <span className="text-textLight normal-case tracking-normal">{title.length}/60</span>
                     </label>
                     <input 
                       type="text" 
@@ -271,48 +276,48 @@ export default function PostItem() {
                       value={title}
                       onChange={e => setTitle(e.target.value)}
                       placeholder={t('post.titlePlaceholder')}
-                      className="w-full bg-background border border-border rounded-xl px-4 py-3 text-textMain focus:outline-none focus:border-primary transition-colors"
+                      className="w-full bg-surfaceHover border border-border rounded-xl px-4 py-3 text-sm text-textMain placeholder:text-textMuted/50 focus:outline-none focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all duration-200"
                     />
                   </div>
 
                   {/* Category & Price */}
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-sm font-medium text-textMuted mb-2">{t('post.categoryLabel')}</label>
+                      <label className="block text-xs font-medium text-textMuted uppercase tracking-wider mb-2">{t('post.categoryLabel')}</label>
                       <select 
                         value={category}
                         onChange={e => setCategory(e.target.value)}
-                        className="w-full bg-background border border-border rounded-xl px-4 py-3 text-textMain focus:outline-none focus:border-primary transition-colors appearance-none"
+                        className="w-full bg-surfaceHover border border-border rounded-xl px-4 py-3 text-sm text-textMain focus:outline-none focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all duration-200 appearance-none cursor-pointer"
                       >
                         {categories.map(c => <option key={c} value={c}>{t(`categories.${c}`)}</option>)}
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-textMuted mb-2">{t('post.price')}</label>
+                      <label className="block text-xs font-medium text-textMuted uppercase tracking-wider mb-2">{t('post.price')}</label>
                       <input 
                         type="number" 
                         min="0"
                         value={price}
                         onChange={e => setPrice(e.target.value)}
                         placeholder="0"
-                        className="w-full bg-background border border-border rounded-xl px-4 py-3 text-textMain focus:outline-none focus:border-primary transition-colors"
+                        className="w-full bg-surfaceHover border border-border rounded-xl px-4 py-3 text-sm text-textMain focus:outline-none focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all duration-200"
                       />
                     </div>
                   </div>
 
                   {/* Condition */}
                   <div>
-                    <label className="block text-sm font-medium text-textMuted mb-2">{t('post.condition')}</label>
+                    <label className="block text-xs font-medium text-textMuted uppercase tracking-wider mb-2">{t('post.condition')}</label>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                       {conditions.map(c => (
                         <button
                           key={c}
                           onClick={() => setCondition(c)}
                           className={clsx(
-                            "px-3 py-2 rounded-xl text-sm font-medium transition-colors border",
+                            "px-3 py-2.5 rounded-xl text-xs font-medium transition-all duration-200",
                             condition === c 
-                              ? "bg-primary/10 border-primary text-primary" 
-                              : "bg-background border-border text-textMuted hover:border-textMuted"
+                              ? "bg-primary text-white shadow-sm" 
+                              : "bg-surfaceHover text-textMuted hover:text-textMain hover:bg-surfaceActive border border-transparent"
                           )}
                         >
                           {t(`post.conditions.${c}`)}
@@ -324,9 +329,9 @@ export default function PostItem() {
                   <button 
                     disabled={!validateStep1()}
                     onClick={() => setStep(2)}
-                    className="mt-4 w-full bg-primary hover:bg-primaryHover text-white py-3.5 rounded-xl font-bold transition-all disabled:opacity-50 disabled:hover:bg-primary flex items-center justify-center gap-2"
+                    className="mt-2 w-full bg-primary hover:bg-primaryHover text-white py-3.5 rounded-xl font-semibold text-sm transition-all duration-300 disabled:opacity-40 disabled:hover:bg-primary flex items-center justify-center gap-2 active:scale-[0.98]"
                   >
-                    {t('post.next')} <ChevronRight size={20} />
+                    {t('post.next')} <ChevronRight size={18} />
                   </button>
                 </motion.div>
               )}
@@ -337,18 +342,20 @@ export default function PostItem() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
-                  className="flex flex-col gap-6"
+                  transition={{ duration: 0.25 }}
+                  className="flex flex-col gap-5"
                 >
-                  <div className="flex items-center gap-4">
-                    <button onClick={() => setStep(1)} className="p-2 hover:bg-surfaceHover rounded-full text-textMuted transition-colors">
-                      <ChevronLeft size={24} />
+                  <div className="flex items-center gap-3">
+                    <button onClick={() => setStep(1)} className="p-2 hover:bg-surfaceHover rounded-xl text-textMuted transition-colors duration-200">
+                      <ChevronLeft size={20} />
                     </button>
-                    <h2 className="text-xl font-display font-bold">{t('post.step2')}</h2>
+                    <h2 className="text-lg font-bold text-textMain">{t('post.step2')}</h2>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-textMuted mb-2">
-                      {t('post.description')} <span className="text-xs text-textMuted/50 float-right">{description.length}/300</span>
+                    <label className="flex items-center justify-between text-xs font-medium text-textMuted uppercase tracking-wider mb-2">
+                      <span>{t('post.description')}</span>
+                      <span className="text-textLight normal-case tracking-normal">{description.length}/300</span>
                     </label>
                     <textarea 
                       maxLength={300}
@@ -356,52 +363,52 @@ export default function PostItem() {
                       value={description}
                       onChange={e => setDescription(e.target.value)}
                       placeholder={t('post.descPlaceholder')}
-                      className="w-full bg-background border border-border rounded-xl px-4 py-3 text-textMain focus:outline-none focus:border-primary transition-colors resize-none"
+                      className="w-full bg-surfaceHover border border-border rounded-xl px-4 py-3 text-sm text-textMain placeholder:text-textMuted/50 focus:outline-none focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all duration-200 resize-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-textMuted mb-2">{t('post.firstName')}</label>
+                    <label className="block text-xs font-medium text-textMuted uppercase tracking-wider mb-2">{t('post.firstName')}</label>
                     <input 
                       type="text" 
                       maxLength={20}
                       value={firstName}
                       onChange={e => setFirstName(e.target.value)}
-                      className="w-full bg-background border border-border rounded-xl px-4 py-3 text-textMain focus:outline-none focus:border-primary transition-colors"
+                      className="w-full bg-surfaceHover border border-border rounded-xl px-4 py-3 text-sm text-textMain focus:outline-none focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all duration-200"
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-sm font-medium text-textMuted mb-2">Room Number</label>
+                      <label className="block text-xs font-medium text-textMuted uppercase tracking-wider mb-2">Room Number</label>
                       <input 
                         type="text" 
                         maxLength={4}
                         value={roomNumber}
                         onChange={e => setRoomNumber(e.target.value.replace(/\D/g, ''))}
-                        className="w-full bg-background border border-border rounded-xl px-4 py-3 text-textMain focus:outline-none focus:border-primary transition-colors"
+                        className="w-full bg-surfaceHover border border-border rounded-xl px-4 py-3 text-sm text-textMain focus:outline-none focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all duration-200"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-textMuted mb-2">{t('post.whatsappNumber')}</label>
+                    <label className="block text-xs font-medium text-textMuted uppercase tracking-wider mb-2">{t('post.whatsappNumber')}</label>
                     <input 
                       type="tel" 
                       value={whatsappNumber}
                       onChange={e => setWhatsappNumber(e.target.value)}
                       placeholder="+7 777 000 0000"
-                      className="w-full bg-background border border-border rounded-xl px-4 py-3 text-textMain focus:outline-none focus:border-primary transition-colors"
+                      className="w-full bg-surfaceHover border border-border rounded-xl px-4 py-3 text-sm text-textMain focus:outline-none focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all duration-200"
                     />
-                    <p className="text-xs text-textMuted mt-2">{t('post.whatsappNote')}</p>
+                    <p className="text-[11px] text-textMuted mt-2">{t('post.whatsappNote')}</p>
                   </div>
 
                   <button 
                     disabled={!validateStep2()}
                     onClick={() => setStep(3)}
-                    className="mt-4 w-full bg-primary hover:bg-primaryHover text-white py-3.5 rounded-xl font-bold transition-all disabled:opacity-50 disabled:hover:bg-primary flex items-center justify-center gap-2"
+                    className="mt-2 w-full bg-primary hover:bg-primaryHover text-white py-3.5 rounded-xl font-semibold text-sm transition-all duration-300 disabled:opacity-40 disabled:hover:bg-primary flex items-center justify-center gap-2 active:scale-[0.98]"
                   >
-                    {t('post.preview')} <ChevronRight size={20} />
+                    {t('post.preview')} <ChevronRight size={18} />
                   </button>
                 </motion.div>
               )}
@@ -412,17 +419,18 @@ export default function PostItem() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
-                  className="flex flex-col gap-6"
+                  transition={{ duration: 0.25 }}
+                  className="flex flex-col gap-5"
                 >
-                  <div className="flex items-center gap-4">
-                    <button onClick={() => setStep(2)} className="p-2 hover:bg-surfaceHover rounded-full text-textMuted transition-colors">
-                      <ChevronLeft size={24} />
+                  <div className="flex items-center gap-3">
+                    <button onClick={() => setStep(2)} className="p-2 hover:bg-surfaceHover rounded-xl text-textMuted transition-colors duration-200">
+                      <ChevronLeft size={20} />
                     </button>
-                    <h2 className="text-xl font-display font-bold">{t('post.step3')}</h2>
+                    <h2 className="text-lg font-bold text-textMain">{t('post.step3')}</h2>
                   </div>
 
-                  <div className="bg-background p-4 rounded-2xl border border-border flex justify-center">
-                    <div className="w-full max-w-[280px]">
+                  <div className="bg-background p-4 rounded-2xl flex justify-center">
+                    <div className="w-full max-w-[260px]">
                       <ListingCard item={previewItem} />
                     </div>
                   </div>
@@ -430,13 +438,21 @@ export default function PostItem() {
                   <button 
                     onClick={handleSubmit}
                     disabled={loading}
-                    className="w-full bg-primary hover:bg-primaryHover text-white py-4 rounded-xl font-bold transition-all shadow-lg shadow-primary/20 active:scale-95 flex items-center justify-center disabled:opacity-50"
+                    className="w-full bg-primary hover:bg-primaryHover text-white py-3.5 rounded-xl font-semibold text-sm transition-all duration-300 shadow-sm hover:shadow-elevated active:scale-[0.98] flex items-center justify-center disabled:opacity-50"
                   >
-                    {loading ? t('post.publishing') : t('post.publish')}
+                    {loading ? (
+                      <span className="flex items-center gap-2">
+                        <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                        </svg>
+                        {t('post.publishing')}
+                      </span>
+                    ) : t('post.publish')}
                   </button>
 
                   {errorMsg && (
-                    <div className="mt-4 p-4 bg-error/10 border border-error/20 rounded-xl text-error text-sm font-medium">
+                    <div className="mt-2 p-4 bg-error/5 border border-error/15 rounded-xl text-error text-xs font-medium leading-relaxed">
                       {errorMsg}
                     </div>
                   )}

@@ -36,21 +36,23 @@ export default function LanguageSwitcher() {
     <div className="relative" ref={dropdownRef}>
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1 text-sm font-medium text-textMain bg-surface hover:bg-surfaceHover px-3 py-2 rounded-lg transition-colors"
+        className="flex items-center gap-1.5 text-sm font-medium text-textSecondary hover:text-textMain px-3 py-2 rounded-lg hover:bg-surfaceHover transition-all duration-200"
       >
         <span>{currentLang.label}</span>
-        <ChevronDown size={16} className={clsx("transition-transform", isOpen && "rotate-180")} />
+        <ChevronDown size={14} className={clsx("transition-transform duration-200", isOpen && "rotate-180")} />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-32 bg-surface border border-border rounded-lg shadow-card overflow-hidden z-50">
+        <div className="absolute right-0 mt-1.5 w-32 bg-white rounded-xl shadow-dropdown overflow-hidden z-50 border border-border/50 py-1">
           {languages.map((lang) => (
             <button
               key={lang.code}
               onClick={() => changeLanguage(lang.code)}
               className={clsx(
-                "w-full text-left px-4 py-2 text-sm transition-colors hover:bg-surfaceHover",
-                i18n.language === lang.code ? "text-primary font-bold bg-surfaceHover/50" : "text-textMain"
+                "w-full text-left px-4 py-2.5 text-sm transition-colors duration-150",
+                i18n.language === lang.code 
+                  ? "text-accent font-semibold bg-accent/5" 
+                  : "text-textSecondary hover:bg-surfaceHover hover:text-textMain"
               )}
             >
               {lang.label}

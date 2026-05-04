@@ -88,11 +88,23 @@ export default function ListingDetail() {
   };
 
   if (loading) {
-    return <div className="animate-pulse h-96 bg-surface rounded-2xl w-full max-w-2xl mx-auto"></div>;
+    return (
+      <div className="max-w-2xl mx-auto">
+        <div className="animate-pulse flex flex-col gap-6">
+          <div className="h-10 w-10 bg-surfaceHover rounded-full"></div>
+          <div className="aspect-[4/3] bg-white rounded-2xl shadow-card"></div>
+          <div className="bg-white rounded-2xl shadow-card p-6 flex flex-col gap-4">
+            <div className="h-4 bg-surfaceHover rounded-lg w-1/4"></div>
+            <div className="h-7 bg-surfaceHover rounded-lg w-3/4"></div>
+            <div className="h-8 bg-surfaceHover rounded-lg w-1/3"></div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (!item) {
-    return <div className="text-center py-20 text-textMuted">{t('details.notFound')}</div>;
+    return <div className="text-center py-20 text-textMuted text-sm">{t('details.notFound')}</div>;
   }
 
   const isSold = item.status === 'sold';
@@ -110,28 +122,31 @@ export default function ListingDetail() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto flex flex-col gap-6 pb-24">
+    <div className="max-w-2xl mx-auto flex flex-col gap-5 pb-28">
       {/* Header Bar */}
       <div className="flex items-center justify-between">
-        <button onClick={() => navigate(-1)} className="p-2 bg-surface hover:bg-surfaceHover rounded-full transition-colors">
-          <ChevronLeft size={24} />
+        <button 
+          onClick={() => navigate(-1)} 
+          className="p-2.5 bg-white hover:bg-surfaceHover rounded-xl transition-all duration-200 shadow-card"
+        >
+          <ChevronLeft size={20} className="text-textSecondary" />
         </button>
         <button 
           onClick={() => {
             navigator.clipboard.writeText(window.location.href);
             alert(t('details.linkCopied'));
           }} 
-          className="p-2 bg-surface hover:bg-surfaceHover rounded-full transition-colors"
+          className="p-2.5 bg-white hover:bg-surfaceHover rounded-xl transition-all duration-200 shadow-card"
         >
-          <Share2 size={20} />
+          <Share2 size={18} className="text-textSecondary" />
         </button>
       </div>
 
       {/* Image Gallery */}
-      <div className="bg-surface rounded-3xl overflow-hidden border border-border relative aspect-[4/3] sm:aspect-video group">
+      <div className="bg-white rounded-2xl overflow-hidden shadow-card relative aspect-[4/3] sm:aspect-video group">
         {isSold && (
-          <div className="absolute inset-0 z-20 bg-background/50 backdrop-blur-sm flex items-center justify-center">
-            <div className="bg-error text-white font-bold tracking-widest px-8 py-3 rotate-[-15deg] shadow-2xl text-2xl uppercase">
+          <div className="absolute inset-0 z-20 bg-white/60 backdrop-blur-sm flex items-center justify-center">
+            <div className="bg-error text-white font-bold tracking-widest px-8 py-3 rotate-[-12deg] rounded-lg shadow-lg text-xl uppercase">
               {t('home.sold')}
             </div>
           </div>
@@ -142,25 +157,32 @@ export default function ListingDetail() {
             <img 
               src={item.photos[activePhoto]} 
               alt="Listing" 
-              className={clsx("w-full h-full object-cover transition-opacity duration-300", isSold && "grayscale")}
+              className={clsx("w-full h-full object-cover transition-opacity duration-300", isSold && "grayscale opacity-60")}
             />
             {item.photos.length > 1 && (
               <>
                 <button 
                   onClick={() => setActivePhoto(p => p === 0 ? item.photos.length - 1 : p - 1)}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-textMain/40 hover:bg-textMain/60 text-surface rounded-full backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 p-2 bg-white/80 hover:bg-white text-textSecondary rounded-xl backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all duration-300 z-10 shadow-sm"
                 >
-                  <ChevronLeft size={20} />
+                  <ChevronLeft size={18} />
                 </button>
                 <button 
                   onClick={() => setActivePhoto(p => p === item.photos.length - 1 ? 0 : p + 1)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-textMain/40 hover:bg-textMain/60 text-surface rounded-full backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-white/80 hover:bg-white text-textSecondary rounded-xl backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all duration-300 z-10 shadow-sm"
                 >
-                  <ChevronRight size={20} />
+                  <ChevronRight size={18} />
                 </button>
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
                   {item.photos.map((_, i) => (
-                    <div key={i} className={clsx("w-2 h-2 rounded-full transition-all", i === activePhoto ? "bg-white w-4" : "bg-white/50")} />
+                    <button 
+                      key={i} 
+                      onClick={() => setActivePhoto(i)}
+                      className={clsx(
+                        "h-1.5 rounded-full transition-all duration-300",
+                        i === activePhoto ? "bg-white w-5 shadow-sm" : "bg-white/50 w-1.5 hover:bg-white/70"
+                      )} 
+                    />
                   ))}
                 </div>
               </>
@@ -168,46 +190,46 @@ export default function ListingDetail() {
           </>
         ) : (
           <div className="w-full h-full flex items-center justify-center text-textMuted bg-surfaceHover">
-            <span className="text-6xl">📦</span>
+            <span className="text-6xl opacity-30">📦</span>
           </div>
         )}
       </div>
 
       {/* Info Section */}
-      <div className="bg-surface border border-border rounded-3xl p-6 shadow-sm">
-        <div className="inline-block px-3 py-1 bg-surfaceHover rounded-lg text-sm font-medium mb-4">
+      <div className="bg-white rounded-2xl p-6 shadow-card">
+        <div className="inline-flex items-center px-3 py-1.5 bg-surfaceHover rounded-lg text-xs font-medium text-textSecondary mb-4">
           {t(`categories.${item.category}`)} • {t(`post.conditions.${item.condition}`)}
         </div>
         
-        <h1 className="text-2xl sm:text-3xl font-display font-bold text-textMain mb-2">{item.title}</h1>
-        <div className="text-3xl font-bold text-primary mb-6">
-          {item.price > 0 ? `${item.price.toLocaleString()} KZT` : t('post.pricePlaceholder')}
+        <h1 className="text-xl sm:text-2xl font-bold text-textMain mb-2 leading-tight">{item.title}</h1>
+        <div className="text-2xl sm:text-3xl font-extrabold text-primary tracking-tight mb-5">
+          {item.price > 0 ? `${item.price.toLocaleString()} ₸` : t('post.pricePlaceholder')}
         </div>
 
         {item.description && (
-          <div className="mb-6 pb-6 border-b border-border">
-            <p className="text-textMain whitespace-pre-wrap leading-relaxed">{item.description}</p>
+          <div className="mb-5 pb-5 border-b border-border/60">
+            <p className="text-sm text-textSecondary whitespace-pre-wrap leading-relaxed">{item.description}</p>
           </div>
         )}
 
         {/* Seller Block */}
-        <h3 className="font-display font-bold text-lg mb-4">{t('details.seller')}</h3>
+        <h3 className="font-semibold text-sm text-textMuted uppercase tracking-wider mb-3">{t('details.seller')}</h3>
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-3 text-textMain">
-            <div className="w-10 h-10 rounded-full bg-surfaceHover flex items-center justify-center text-primary">
-              <User size={20} />
+            <div className="w-10 h-10 rounded-xl bg-surfaceHover flex items-center justify-center text-textMuted">
+              <User size={18} />
             </div>
-            <span className="font-medium text-lg">{item.firstName}</span>
+            <span className="font-semibold">{item.firstName}</span>
           </div>
           
-          <div className="flex flex-col gap-2 pl-13 text-textMuted">
+          <div className="flex flex-col gap-2 pl-[52px] text-sm text-textMuted">
             <div className="flex items-center gap-2">
-              <MapPin size={16} />
+              <MapPin size={14} className="opacity-60" />
               <span>{t('details.room')} {item.roomNumber}</span>
             </div>
             {timeAgo && (
               <div className="flex items-center gap-2">
-                <Clock size={16} />
+                <Clock size={14} className="opacity-60" />
                 <span>Posted {timeAgo}</span>
               </div>
             )}
@@ -216,11 +238,11 @@ export default function ListingDetail() {
       </div>
 
       {/* Actions */}
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-3">
         {isOwner && !isSold && (
           <button 
             onClick={handleMarkAsSold}
-            className="w-full bg-surface border border-border hover:border-primary text-textMain py-4 rounded-xl font-bold transition-all"
+            className="w-full bg-white border border-border hover:border-borderHover text-textMain py-3.5 rounded-xl font-semibold text-sm transition-all duration-200 shadow-card hover:shadow-elevated"
           >
             {t('details.markSold')}
           </button>
@@ -229,7 +251,7 @@ export default function ListingDetail() {
         {isOwner && (
           <button 
             onClick={handleDelete}
-            className="w-full bg-error/10 hover:bg-error/20 text-error border border-error/20 py-4 rounded-xl font-bold transition-all"
+            className="w-full bg-error/5 hover:bg-error/10 text-error border border-error/15 py-3.5 rounded-xl font-semibold text-sm transition-all duration-200"
           >
             {t('details.delete')}
           </button>
@@ -238,9 +260,9 @@ export default function ListingDetail() {
         {!isOwner && (
           <button 
             onClick={() => setShowReport(true)}
-            className="flex items-center justify-center gap-2 text-textMuted hover:text-error transition-colors py-2"
+            className="flex items-center justify-center gap-2 text-sm text-textMuted hover:text-error transition-colors duration-200 py-2"
           >
-            <AlertTriangle size={16} />
+            <AlertTriangle size={14} />
             {t('details.reportListing')}
           </button>
         )}
@@ -248,13 +270,13 @@ export default function ListingDetail() {
 
       {/* Sticky Bottom Action (WhatsApp) */}
       {!isSold && (
-        <div className="fixed bottom-0 left-0 w-full bg-background/80 backdrop-blur-md border-t border-border p-4 z-40">
+        <div className="fixed bottom-0 left-0 w-full bg-white/80 backdrop-blur-xl border-t border-border/50 p-4 z-40">
           <div className="max-w-2xl mx-auto">
             <button 
               onClick={handleWhatsApp}
-              className="w-full flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5c] text-white py-4 rounded-xl font-bold text-lg transition-all shadow-lg shadow-[#25D366]/20 active:scale-95"
+              className="w-full flex items-center justify-center gap-2.5 bg-[#25D366] hover:bg-[#20bd5c] text-white py-3.5 rounded-xl font-semibold text-base transition-all duration-300 shadow-lg shadow-[#25D366]/15 active:scale-[0.98]"
             >
-              <MessageCircle size={24} />
+              <MessageCircle size={20} />
               {t('details.contactWhatsApp')}
             </button>
           </div>
@@ -266,19 +288,21 @@ export default function ListingDetail() {
         {showReport && (
           <motion.div 
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-4"
+            onClick={(e) => e.target === e.currentTarget && setShowReport(false)}
           >
             <motion.div 
-              initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
-              className="bg-surface w-full max-w-md rounded-2xl p-6 border border-border shadow-2xl"
+              initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 20, opacity: 0 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="bg-white w-full max-w-md rounded-2xl p-6 shadow-dropdown"
             >
-              <h3 className="text-xl font-bold mb-4">{t('report.title')}</h3>
+              <h3 className="text-lg font-bold text-textMain mb-5">{t('report.title')}</h3>
               
               <div className="mb-4">
-                <label className="block text-sm text-textMuted mb-2">{t('report.reason')}</label>
+                <label className="block text-xs font-medium text-textMuted uppercase tracking-wider mb-2">{t('report.reason')}</label>
                 <select 
                   value={reportReason} onChange={e => setReportReason(e.target.value)}
-                  className="w-full bg-background border border-border rounded-xl px-4 py-3 text-textMain focus:outline-none focus:border-primary"
+                  className="w-full bg-surfaceHover border border-border rounded-xl px-4 py-3 text-sm text-textMain focus:outline-none focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all duration-200"
                 >
                   <option value="spam">{t('report.reasonSpam')}</option>
                   <option value="inappropriate">{t('report.reasonInappropriate')}</option>
@@ -288,16 +312,26 @@ export default function ListingDetail() {
               </div>
 
               <div className="mb-6">
-                <label className="block text-sm text-textMuted mb-2">{t('report.note')}</label>
+                <label className="block text-xs font-medium text-textMuted uppercase tracking-wider mb-2">{t('report.note')}</label>
                 <textarea 
                   value={reportNote} onChange={e => setReportNote(e.target.value)} rows={3}
-                  className="w-full bg-background border border-border rounded-xl px-4 py-3 text-textMain focus:outline-none focus:border-primary resize-none"
+                  className="w-full bg-surfaceHover border border-border rounded-xl px-4 py-3 text-sm text-textMain focus:outline-none focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all duration-200 resize-none"
                 />
               </div>
 
               <div className="flex gap-3">
-                <button onClick={() => setShowReport(false)} className="flex-1 py-3 rounded-xl bg-surfaceHover font-medium">{t('report.cancel')}</button>
-                <button onClick={handleReport} className="flex-1 py-3 rounded-xl bg-error hover:bg-error/90 text-white font-medium shadow-lg shadow-error/20">{t('report.submitBtn')}</button>
+                <button 
+                  onClick={() => setShowReport(false)} 
+                  className="flex-1 py-3 rounded-xl bg-surfaceHover hover:bg-surfaceActive font-medium text-sm text-textSecondary transition-colors duration-200"
+                >
+                  {t('report.cancel')}
+                </button>
+                <button 
+                  onClick={handleReport} 
+                  className="flex-1 py-3 rounded-xl bg-error hover:bg-error/90 text-white font-medium text-sm transition-all duration-200 shadow-sm"
+                >
+                  {t('report.submitBtn')}
+                </button>
               </div>
             </motion.div>
           </motion.div>

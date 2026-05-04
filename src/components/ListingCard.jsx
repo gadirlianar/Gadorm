@@ -28,12 +28,12 @@ export default function ListingCard({ item }) {
   return (
     <Link 
       to={`/item/${item.id}`} 
-      className="group bg-surface rounded-3xl overflow-hidden border border-border hover:border-primary/50 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-glow flex flex-col relative h-full"
+      className="group bg-white rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 shadow-card hover:shadow-cardHover flex flex-col relative h-full"
     >
       {/* Sold Overlay */}
       {isSold && (
-        <div className="absolute inset-0 z-10 bg-background/60 backdrop-blur-sm flex items-center justify-center">
-          <div className="bg-error text-white font-black tracking-widest px-8 py-2.5 rotate-[-15deg] shadow-glow text-lg uppercase border border-error/50">
+        <div className="absolute inset-0 z-10 bg-white/70 backdrop-blur-sm flex items-center justify-center">
+          <div className="bg-error text-white font-bold tracking-widest px-6 py-2 rotate-[-12deg] rounded-lg text-sm uppercase shadow-lg">
             {t('home.sold')}
           </div>
         </div>
@@ -45,39 +45,39 @@ export default function ListingCard({ item }) {
           <img 
             src={item.photos[0]} 
             alt={item.title} 
-            className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${isSold ? 'grayscale' : ''}`}
+            className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04] ${isSold ? 'grayscale opacity-60' : ''}`}
             loading="lazy"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-textMuted">
-            <span className="text-4xl">📦</span>
+          <div className="w-full h-full flex items-center justify-center text-textMuted bg-surfaceHover">
+            <span className="text-4xl opacity-40">📦</span>
           </div>
         )}
         
         {/* Category Badge */}
-        <div className="absolute top-3 left-3 bg-surface/90 backdrop-blur-md px-3 py-1.5 rounded-xl text-xs font-bold text-white border border-white/10 shadow-sm">
+        <div className="absolute top-2.5 left-2.5 bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-lg text-[11px] font-semibold text-textSecondary shadow-sm">
           {t(`categories.${item.category}`)}
         </div>
       </div>
 
       {/* Content */}
-      <div className="p-5 flex-1 flex flex-col gap-1.5">
-        <h3 className="font-display font-bold text-lg line-clamp-2 text-white group-hover:text-primary transition-colors leading-tight">
+      <div className="p-4 flex-1 flex flex-col gap-1">
+        <h3 className="font-semibold text-sm line-clamp-2 text-textMain group-hover:text-accent transition-colors duration-300 leading-snug">
           {item.title}
         </h3>
         
-        <div className="text-xl font-bold text-primary mt-1 mb-2">
-          {item.price > 0 ? `${item.price.toLocaleString()} KZT` : t('post.pricePlaceholder')}
+        <div className="text-lg font-extrabold text-primary tracking-tight mt-0.5">
+          {item.price > 0 ? `${item.price.toLocaleString()} ₸` : t('post.pricePlaceholder')}
         </div>
         
-        <div className="mt-auto flex flex-col gap-1.5 text-sm text-textMuted">
+        <div className="mt-auto pt-2 flex flex-col gap-1 text-xs text-textMuted">
           <div className="flex items-center gap-1.5">
-            <MapPin size={14} className="shrink-0" />
+            <MapPin size={12} className="shrink-0 opacity-60" />
             <span className="truncate">{t('details.room')} {item.roomNumber}</span>
           </div>
           {timeAgo && (
             <div className="flex items-center gap-1.5">
-              <Clock size={14} className="shrink-0" />
+              <Clock size={12} className="shrink-0 opacity-60" />
               <span className="truncate">{timeAgo}</span>
             </div>
           )}
