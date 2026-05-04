@@ -1,11 +1,11 @@
-export default function ListingSkeleton() {
+export default function ListingSkeleton({ featured = false }) {
   return (
-    <div className="bg-white rounded-2xl overflow-hidden shadow-card animate-pulse h-full flex flex-col">
-      <div className="aspect-square bg-surfaceHover w-full"></div>
-      <div className="p-4 flex-1 flex flex-col gap-3">
-        <div className="h-4 bg-surfaceHover rounded-lg w-4/5"></div>
-        <div className="h-5 bg-surfaceHover rounded-lg w-1/3"></div>
-        <div className="h-3 bg-surfaceHover rounded-lg w-1/2 mt-auto"></div>
+    <div className={`bg-card rounded-3xl overflow-hidden h-full flex flex-col ${featured ? '' : ''}`}>
+      <div className={`bg-pill/20 w-full animate-pulse-soft ${featured ? 'aspect-[4/5]' : 'aspect-square'}`} />
+      <div className="p-4 flex-1 flex flex-col gap-2.5">
+        <div className="h-6 bg-pill/20 rounded-lg w-2/5 animate-pulse-soft" />
+        <div className="h-3.5 bg-pill/20 rounded-md w-4/5 animate-pulse-soft" />
+        <div className="h-3 bg-pill/20 rounded-md w-1/2 mt-auto animate-pulse-soft" />
       </div>
     </div>
   );

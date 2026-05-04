@@ -1,12 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { useState, useRef, useEffect } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { Globe } from 'lucide-react';
 import clsx from 'clsx';
 
 const languages = [
-  { code: 'ru', label: '🇷🇺 РУС' },
-  { code: 'kk', label: '🇰🇿 ҚАЗ' },
-  { code: 'en', label: '🇬🇧 ENG' }
+  { code: 'ru', label: 'РУС', flag: '🇷🇺' },
+  { code: 'kk', label: 'ҚАЗ', flag: '🇰🇿' },
+  { code: 'en', label: 'ENG', flag: '🇬🇧' }
 ];
 
 export default function LanguageSwitcher() {
@@ -21,7 +21,6 @@ export default function LanguageSwitcher() {
     setIsOpen(false);
   };
 
-  // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -34,28 +33,34 @@ export default function LanguageSwitcher() {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      <button 
+      <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1.5 text-sm font-medium text-textSecondary hover:text-textMain px-3 py-2 rounded-lg hover:bg-surfaceHover transition-all duration-200"
+        className="flex items-center gap-1.5 text-[13px] font-medium text-labelTertiary hover:text-label px-2.5 py-1.5 rounded-full hover:bg-pill/50 transition-all duration-200 ease-apple press"
       >
+        <Globe size={14} strokeWidth={2} />
         <span>{currentLang.label}</span>
-        <ChevronDown size={14} className={clsx("transition-transform duration-200", isOpen && "rotate-180")} />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-1.5 w-32 bg-white rounded-xl shadow-dropdown overflow-hidden z-50 border border-border/50 py-1">
+        <div className="absolute right-0 mt-2 w-36 bg-card rounded-2xl shadow-dropdownApple overflow-hidden z-50 py-1 animate-slide-up">
           {languages.map((lang) => (
             <button
               key={lang.code}
               onClick={() => changeLanguage(lang.code)}
               className={clsx(
-                "w-full text-left px-4 py-2.5 text-sm transition-colors duration-150",
-                i18n.language === lang.code 
-                  ? "text-accent font-semibold bg-accent/5" 
-                  : "text-textSecondary hover:bg-surfaceHover hover:text-textMain"
+                "w-full text-left px-4 py-2.5 text-[13px] font-medium transition-colors duration-150 flex items-center gap-2.5",
+                i18n.language === lang.code
+                  ? "text-blue bg-blue/5"
+                  : "text-label hover:bg-bg"
               )}
             >
-              {lang.label}
+              <span className="text-base">{lang.flag}</span>
+              <span>{lang.label}</span>
+              {i18n.language === lang.code && (
+                <svg className="w-3.5 h-3.5 ml-auto text-blue" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+              )}
             </button>
           ))}
         </div>

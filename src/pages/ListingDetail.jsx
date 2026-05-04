@@ -6,7 +6,7 @@ import { db } from '../lib/firebase';
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatDistanceToNow } from 'date-fns';
 import { ru, kk, enUS } from 'date-fns/locale';
-import { ChevronLeft, ChevronRight, Share2, MapPin, Clock, User, AlertTriangle, MessageCircle } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Share2, MapPin, Clock, User, Flag, MessageCircle } from 'lucide-react';
 import clsx from 'clsx';
 
 const locales = { ru, kk, en: enUS };
@@ -33,13 +33,10 @@ export default function ListingDetail() {
           const data = docSnap.data();
           setItem({ id: docSnap.id, ...data });
           
-          // Check ownership
           const tokens = JSON.parse(localStorage.getItem('dormbazar_seller_tokens') || '[]');
           if (tokens.includes(data.sellerToken)) {
             setIsOwner(true);
           }
-        } else {
-          // not found
         }
       } catch (error) {
         console.error("Error fetching listing:", error);
@@ -87,24 +84,30 @@ export default function ListingDetail() {
     }
   };
 
+  // ── Loading skeleton ──
   if (loading) {
     return (
-      <div className="max-w-2xl mx-auto">
-        <div className="animate-pulse flex flex-col gap-6">
-          <div className="h-10 w-10 bg-surfaceHover rounded-full"></div>
-          <div className="aspect-[4/3] bg-white rounded-2xl shadow-card"></div>
-          <div className="bg-white rounded-2xl shadow-card p-6 flex flex-col gap-4">
-            <div className="h-4 bg-surfaceHover rounded-lg w-1/4"></div>
-            <div className="h-7 bg-surfaceHover rounded-lg w-3/4"></div>
-            <div className="h-8 bg-surfaceHover rounded-lg w-1/3"></div>
-          </div>
+      <div className="max-w-2xl mx-auto flex flex-col gap-4">
+        <div className="flex justify-between">
+          <div className="w-10 h-10 bg-pill/20 rounded-full animate-pulse-soft" />
+          <div className="w-10 h-10 bg-pill/20 rounded-full animate-pulse-soft" />
+        </div>
+        <div className="aspect-[4/3] bg-card rounded-3xl animate-pulse-soft" />
+        <div className="bg-card rounded-3xl p-6 flex flex-col gap-4">
+          <div className="h-8 bg-pill/20 rounded-xl w-1/3 animate-pulse-soft" />
+          <div className="h-5 bg-pill/20 rounded-xl w-3/4 animate-pulse-soft" />
+          <div className="h-4 bg-pill/20 rounded-xl w-1/2 animate-pulse-soft" />
         </div>
       </div>
     );
   }
 
   if (!item) {
-    return <div className="text-center py-20 text-textMuted text-sm">{t('details.notFound')}</div>;
+    return (
+      <div className="text-center py-20 text-labelTertiary text-[15px]">
+        {t('details.notFound')}
+      </div>
+    );
   }
 
   const isSold = item.status === 'sold';
@@ -122,66 +125,71 @@ export default function ListingDetail() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto flex flex-col gap-5 pb-28">
-      {/* Header Bar */}
+    <div className="max-w-2xl mx-auto flex flex-col gap-4 pb-28">
+
+      {/* ── Top bar — floating pill buttons ── */}
       <div className="flex items-center justify-between">
-        <button 
-          onClick={() => navigate(-1)} 
-          className="p-2.5 bg-white hover:bg-surfaceHover rounded-xl transition-all duration-200 shadow-card"
+        <button
+          onClick={() => navigate(-1)}
+          className="w-10 h-10 flex items-center justify-center bg-card rounded-full shadow-card hover:shadow-float transition-all duration-200 ease-apple press"
         >
-          <ChevronLeft size={20} className="text-textSecondary" />
+          <ChevronLeft size={20} className="text-label" />
         </button>
-        <button 
+        <button
           onClick={() => {
             navigator.clipboard.writeText(window.location.href);
             alert(t('details.linkCopied'));
-          }} 
-          className="p-2.5 bg-white hover:bg-surfaceHover rounded-xl transition-all duration-200 shadow-card"
+          }}
+          className="w-10 h-10 flex items-center justify-center bg-card rounded-full shadow-card hover:shadow-float transition-all duration-200 ease-apple press"
         >
-          <Share2 size={18} className="text-textSecondary" />
+          <Share2 size={17} className="text-label" />
         </button>
       </div>
 
-      {/* Image Gallery */}
-      <div className="bg-white rounded-2xl overflow-hidden shadow-card relative aspect-[4/3] sm:aspect-video group">
+      {/* ── Image Gallery — Full bleed, rounded-3xl ── */}
+      <div className="bg-card rounded-3xl overflow-hidden relative aspect-[4/3] group">
         {isSold && (
-          <div className="absolute inset-0 z-20 bg-white/60 backdrop-blur-sm flex items-center justify-center">
-            <div className="bg-error text-white font-bold tracking-widest px-8 py-3 rotate-[-12deg] rounded-lg shadow-lg text-xl uppercase">
+          <div className="absolute inset-0 z-20 bg-card/70 backdrop-blur-sm flex items-center justify-center">
+            <div className="bg-red text-white font-black text-sm tracking-[0.2em] uppercase px-8 py-2.5 rounded-full rotate-[-8deg] shadow-lg">
               {t('home.sold')}
             </div>
           </div>
         )}
-        
+
         {item.photos && item.photos.length > 0 ? (
           <>
-            <img 
-              src={item.photos[activePhoto]} 
-              alt="Listing" 
-              className={clsx("w-full h-full object-cover transition-opacity duration-300", isSold && "grayscale opacity-60")}
+            <img
+              src={item.photos[activePhoto]}
+              alt="Listing"
+              className={clsx(
+                "w-full h-full object-cover transition-all duration-500 ease-apple",
+                isSold && "grayscale opacity-50"
+              )}
             />
             {item.photos.length > 1 && (
               <>
-                <button 
+                <button
                   onClick={() => setActivePhoto(p => p === 0 ? item.photos.length - 1 : p - 1)}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 p-2 bg-white/80 hover:bg-white text-textSecondary rounded-xl backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all duration-300 z-10 shadow-sm"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center bg-card/80 backdrop-blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 z-10 shadow-pill press"
                 >
-                  <ChevronLeft size={18} />
+                  <ChevronLeft size={18} className="text-label" />
                 </button>
-                <button 
+                <button
                   onClick={() => setActivePhoto(p => p === item.photos.length - 1 ? 0 : p + 1)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-white/80 hover:bg-white text-textSecondary rounded-xl backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all duration-300 z-10 shadow-sm"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center bg-card/80 backdrop-blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 z-10 shadow-pill press"
                 >
-                  <ChevronRight size={18} />
+                  <ChevronRight size={18} className="text-label" />
                 </button>
-                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+                {/* Pill indicator */}
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 glass-nav px-3 py-1.5 rounded-full flex gap-1.5 z-10">
                   {item.photos.map((_, i) => (
-                    <button 
-                      key={i} 
+                    <button
+                      key={i}
                       onClick={() => setActivePhoto(i)}
                       className={clsx(
                         "h-1.5 rounded-full transition-all duration-300",
-                        i === activePhoto ? "bg-white w-5 shadow-sm" : "bg-white/50 w-1.5 hover:bg-white/70"
-                      )} 
+                        i === activePhoto ? "bg-label w-4" : "bg-labelTertiary/40 w-1.5"
+                      )}
                     />
                   ))}
                 </div>
@@ -189,92 +197,115 @@ export default function ListingDetail() {
             )}
           </>
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-textMuted bg-surfaceHover">
-            <span className="text-6xl opacity-30">📦</span>
+          <div className="w-full h-full flex items-center justify-center bg-pill/20">
+            <span className="text-7xl opacity-15 select-none">📦</span>
           </div>
         )}
       </div>
 
-      {/* Info Section */}
-      <div className="bg-white rounded-2xl p-6 shadow-card">
-        <div className="inline-flex items-center px-3 py-1.5 bg-surfaceHover rounded-lg text-xs font-medium text-textSecondary mb-4">
-          {t(`categories.${item.category}`)} • {t(`post.conditions.${item.condition}`)}
-        </div>
-        
-        <h1 className="text-xl sm:text-2xl font-bold text-textMain mb-2 leading-tight">{item.title}</h1>
-        <div className="text-2xl sm:text-3xl font-extrabold text-primary tracking-tight mb-5">
-          {item.price > 0 ? `${item.price.toLocaleString()} ₸` : t('post.pricePlaceholder')}
+      {/* ── Info Card — iOS grouped style ── */}
+      <div className="bg-card rounded-3xl overflow-hidden">
+        <div className="p-5 sm:p-6">
+          {/* Category & Condition badge */}
+          <div className="flex items-center gap-2 mb-3">
+            <span className="bg-pill/60 text-labelSecondary text-[11px] font-semibold px-2.5 py-1 rounded-full">
+              {t(`categories.${item.category}`)}
+            </span>
+            <span className="bg-pill/60 text-labelSecondary text-[11px] font-semibold px-2.5 py-1 rounded-full">
+              {t(`post.conditions.${item.condition}`)}
+            </span>
+          </div>
+
+          {/* Price — THE hero */}
+          <div className="text-[32px] sm:text-[36px] font-black tracking-[-0.04em] text-label leading-none mb-1.5">
+            {item.price > 0 ? `${item.price.toLocaleString()} ₸` : t('post.pricePlaceholder')}
+          </div>
+
+          {/* Title */}
+          <h1 className="text-[17px] sm:text-[19px] font-semibold text-labelSecondary leading-snug mb-1">
+            {item.title}
+          </h1>
         </div>
 
+        {/* Description — separated */}
         {item.description && (
-          <div className="mb-5 pb-5 border-b border-border/60">
-            <p className="text-sm text-textSecondary whitespace-pre-wrap leading-relaxed">{item.description}</p>
+          <div className="px-5 sm:px-6 pb-5">
+            <div className="border-t border-separatorLight pt-4">
+              <p className="text-[14px] text-labelSecondary/80 whitespace-pre-wrap leading-relaxed">
+                {item.description}
+              </p>
+            </div>
           </div>
         )}
+      </div>
 
-        {/* Seller Block */}
-        <h3 className="font-semibold text-sm text-textMuted uppercase tracking-wider mb-3">{t('details.seller')}</h3>
-        <div className="flex flex-col gap-3">
-          <div className="flex items-center gap-3 text-textMain">
-            <div className="w-10 h-10 rounded-xl bg-surfaceHover flex items-center justify-center text-textMuted">
-              <User size={18} />
+      {/* ── Seller Card — iOS grouped row style ── */}
+      <div className="bg-card rounded-3xl overflow-hidden">
+        <div className="p-5 sm:p-6">
+          <p className="text-[11px] font-semibold text-labelTertiary tracking-[0.08em] uppercase mb-3">
+            {t('details.seller')}
+          </p>
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-full bg-blue/10 flex items-center justify-center text-blue">
+              <User size={20} strokeWidth={1.5} />
             </div>
-            <span className="font-semibold">{item.firstName}</span>
-          </div>
-          
-          <div className="flex flex-col gap-2 pl-[52px] text-sm text-textMuted">
-            <div className="flex items-center gap-2">
-              <MapPin size={14} className="opacity-60" />
-              <span>{t('details.room')} {item.roomNumber}</span>
-            </div>
-            {timeAgo && (
-              <div className="flex items-center gap-2">
-                <Clock size={14} className="opacity-60" />
-                <span>Posted {timeAgo}</span>
+            <div className="flex-1">
+              <span className="font-semibold text-[15px] text-label block">{item.firstName}</span>
+              <div className="flex items-center gap-3 mt-0.5 text-[12px] text-labelTertiary">
+                <span className="flex items-center gap-1">
+                  <MapPin size={11} strokeWidth={2.5} />
+                  {t('details.room')} {item.roomNumber}
+                </span>
+                {timeAgo && (
+                  <span className="flex items-center gap-1">
+                    <Clock size={11} strokeWidth={2.5} />
+                    {timeAgo}
+                  </span>
+                )}
               </div>
-            )}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Actions */}
-      <div className="flex flex-col gap-3">
-        {isOwner && !isSold && (
-          <button 
-            onClick={handleMarkAsSold}
-            className="w-full bg-white border border-border hover:border-borderHover text-textMain py-3.5 rounded-xl font-semibold text-sm transition-all duration-200 shadow-card hover:shadow-elevated"
-          >
-            {t('details.markSold')}
-          </button>
-        )}
-
-        {isOwner && (
-          <button 
+      {/* ── Owner Actions ── */}
+      {isOwner && (
+        <div className="bg-card rounded-3xl overflow-hidden divide-y divide-separatorLight">
+          {!isSold && (
+            <button
+              onClick={handleMarkAsSold}
+              className="w-full px-5 py-4 text-[15px] font-medium text-blue text-center hover:bg-bg transition-colors duration-150 press"
+            >
+              {t('details.markSold')}
+            </button>
+          )}
+          <button
             onClick={handleDelete}
-            className="w-full bg-error/5 hover:bg-error/10 text-error border border-error/15 py-3.5 rounded-xl font-semibold text-sm transition-all duration-200"
+            className="w-full px-5 py-4 text-[15px] font-medium text-red text-center hover:bg-bg transition-colors duration-150 press"
           >
             {t('details.delete')}
           </button>
-        )}
-        
-        {!isOwner && (
-          <button 
-            onClick={() => setShowReport(true)}
-            className="flex items-center justify-center gap-2 text-sm text-textMuted hover:text-error transition-colors duration-200 py-2"
-          >
-            <AlertTriangle size={14} />
-            {t('details.reportListing')}
-          </button>
-        )}
-      </div>
+        </div>
+      )}
 
-      {/* Sticky Bottom Action (WhatsApp) */}
+      {/* ── Report ── */}
+      {!isOwner && (
+        <button
+          onClick={() => setShowReport(true)}
+          className="flex items-center justify-center gap-1.5 text-[13px] text-labelTertiary hover:text-red transition-colors duration-200 py-3 press"
+        >
+          <Flag size={13} />
+          {t('details.reportListing')}
+        </button>
+      )}
+
+      {/* ── Sticky WhatsApp Bar ── */}
       {!isSold && (
-        <div className="fixed bottom-0 left-0 w-full bg-white/80 backdrop-blur-xl border-t border-border/50 p-4 z-40">
+        <div className="fixed bottom-0 left-0 w-full glass-bottom border-t border-separatorLight/50 p-4 z-40 safe-area-bottom">
           <div className="max-w-2xl mx-auto">
-            <button 
+            <button
               onClick={handleWhatsApp}
-              className="w-full flex items-center justify-center gap-2.5 bg-[#25D366] hover:bg-[#20bd5c] text-white py-3.5 rounded-xl font-semibold text-base transition-all duration-300 shadow-lg shadow-[#25D366]/15 active:scale-[0.98]"
+              className="w-full flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#1FAD55] text-white py-3.5 rounded-2xl font-semibold text-[15px] transition-all duration-200 ease-apple shadow-fab press"
             >
               <MessageCircle size={20} />
               {t('details.contactWhatsApp')}
@@ -283,26 +314,36 @@ export default function ListingDetail() {
         </div>
       )}
 
-      {/* Report Modal */}
+      {/* ── Report Modal — iOS Action Sheet style ── */}
       <AnimatePresence>
         {showReport && (
-          <motion.div 
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-4"
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm flex items-end sm:items-center justify-center"
             onClick={(e) => e.target === e.currentTarget && setShowReport(false)}
           >
-            <motion.div 
-              initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 20, opacity: 0 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="bg-white w-full max-w-md rounded-2xl p-6 shadow-dropdown"
+            <motion.div
+              initial={{ y: 40, opacity: 0, scale: 0.95 }}
+              animate={{ y: 0, opacity: 1, scale: 1 }}
+              exit={{ y: 40, opacity: 0, scale: 0.95 }}
+              transition={{ type: 'spring', damping: 28, stiffness: 350 }}
+              className="bg-card w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 shadow-dropdownApple"
             >
-              <h3 className="text-lg font-bold text-textMain mb-5">{t('report.title')}</h3>
+              {/* Drag handle */}
+              <div className="w-9 h-1 bg-labelQuaternary rounded-full mx-auto mb-5 sm:hidden" />
               
+              <h3 className="text-[17px] font-bold text-label mb-5">{t('report.title')}</h3>
+
               <div className="mb-4">
-                <label className="block text-xs font-medium text-textMuted uppercase tracking-wider mb-2">{t('report.reason')}</label>
-                <select 
-                  value={reportReason} onChange={e => setReportReason(e.target.value)}
-                  className="w-full bg-surfaceHover border border-border rounded-xl px-4 py-3 text-sm text-textMain focus:outline-none focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all duration-200"
+                <label className="block text-[11px] font-semibold text-labelTertiary tracking-[0.08em] uppercase mb-2">
+                  {t('report.reason')}
+                </label>
+                <select
+                  value={reportReason}
+                  onChange={e => setReportReason(e.target.value)}
+                  className="ios-input"
                 >
                   <option value="spam">{t('report.reasonSpam')}</option>
                   <option value="inappropriate">{t('report.reasonInappropriate')}</option>
@@ -312,23 +353,27 @@ export default function ListingDetail() {
               </div>
 
               <div className="mb-6">
-                <label className="block text-xs font-medium text-textMuted uppercase tracking-wider mb-2">{t('report.note')}</label>
-                <textarea 
-                  value={reportNote} onChange={e => setReportNote(e.target.value)} rows={3}
-                  className="w-full bg-surfaceHover border border-border rounded-xl px-4 py-3 text-sm text-textMain focus:outline-none focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all duration-200 resize-none"
+                <label className="block text-[11px] font-semibold text-labelTertiary tracking-[0.08em] uppercase mb-2">
+                  {t('report.note')}
+                </label>
+                <textarea
+                  value={reportNote}
+                  onChange={e => setReportNote(e.target.value)}
+                  rows={3}
+                  className="ios-input resize-none"
                 />
               </div>
 
               <div className="flex gap-3">
-                <button 
-                  onClick={() => setShowReport(false)} 
-                  className="flex-1 py-3 rounded-xl bg-surfaceHover hover:bg-surfaceActive font-medium text-sm text-textSecondary transition-colors duration-200"
+                <button
+                  onClick={() => setShowReport(false)}
+                  className="flex-1 py-3.5 rounded-2xl bg-pill/60 hover:bg-pill font-semibold text-[15px] text-label transition-colors duration-150 press"
                 >
                   {t('report.cancel')}
                 </button>
-                <button 
-                  onClick={handleReport} 
-                  className="flex-1 py-3 rounded-xl bg-error hover:bg-error/90 text-white font-medium text-sm transition-all duration-200 shadow-sm"
+                <button
+                  onClick={handleReport}
+                  className="flex-1 py-3.5 rounded-2xl bg-red hover:bg-red/90 text-white font-semibold text-[15px] transition-all duration-150 press"
                 >
                   {t('report.submitBtn')}
                 </button>

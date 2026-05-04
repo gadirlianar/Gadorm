@@ -7,55 +7,69 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: '#F8F9FA',
-        surface: '#FFFFFF',
-        surfaceHover: '#F1F3F5',
-        surfaceActive: '#E9ECEF',
-        primary: '#1E293B',       // Dark slate — premium primary
-        primaryHover: '#0F172A',
-        accent: '#2563EB',        // Clean blue accent
-        accentHover: '#1D4ED8',
-        secondary: '#059669',
-        textMain: '#0F172A',      // Near-black
-        textSecondary: '#334155', // Dark slate
-        textMuted: '#94A3B8',     // Soft muted gray
-        textLight: '#CBD5E1',
-        border: '#E2E8F0',
-        borderHover: '#CBD5E1',
-        error: '#EF4444',
-        success: '#10B981',
+        // iOS-inspired palette
+        bg: '#F2F2F7',              // iOS system gray 6
+        card: '#FFFFFF',
+        cardHover: '#F9F9FB',
+        pill: '#E5E5EA',            // iOS system gray 5
+        pillActive: '#1C1C1E',      // iOS system label
+        
+        // Semantic
+        label: '#1C1C1E',           // Primary label
+        labelSecondary: '#3A3A3C',  // Secondary label
+        labelTertiary: '#8E8E93',   // Tertiary label  
+        labelQuaternary: '#C7C7CC', // Quaternary label
+        separator: '#C6C6C8',       // iOS separator
+        separatorLight: '#E5E5EA',  
+        
+        // Accent
+        blue: '#007AFF',            // iOS blue
+        blueHover: '#0066D6',
+        green: '#34C759',           // iOS green
+        red: '#FF3B30',             // iOS red
+        orange: '#FF9500',          // iOS orange
+        
+        // Extended
+        groupedBg: '#F2F2F7',
+        fillTertiary: '#767680',
       },
       fontFamily: {
-        display: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-        body: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        sans: [
+          '-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'SF Pro Text',
+          'system-ui', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'sans-serif'
+        ],
       },
       boxShadow: {
-        'card': '0 1px 3px 0 rgba(0,0,0,0.04), 0 1px 2px -1px rgba(0,0,0,0.03)',
-        'cardHover': '0 20px 40px -12px rgba(0,0,0,0.1), 0 8px 20px -8px rgba(0,0,0,0.06)',
-        'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.04)',
-        'glow': '0 0 20px rgba(37,99,235,0.15)',
-        'input': 'inset 0 2px 4px 0 rgba(0,0,0,0.04)',
-        'elevated': '0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05)',
-        'dropdown': '0 10px 40px -10px rgba(0,0,0,0.12), 0 4px 12px -4px rgba(0,0,0,0.05)',
+        'float': '0 2px 40px -8px rgba(0,0,0,0.12), 0 0 1px rgba(0,0,0,0.05)',
+        'card': '0 0.5px 0 0 rgba(0,0,0,0.04)',
+        'cardLift': '0 16px 48px -8px rgba(0,0,0,0.12), 0 4px 12px -4px rgba(0,0,0,0.06)',
+        'cardLiftXl': '0 24px 64px -12px rgba(0,0,0,0.15), 0 8px 24px -8px rgba(0,0,0,0.08)',
+        'pill': '0 1px 3px rgba(0,0,0,0.08)',
+        'searchInset': 'inset 0 1px 3px rgba(0,0,0,0.06)',
+        'dropdownApple': '0 12px 48px -6px rgba(0,0,0,0.15), 0 0 1px rgba(0,0,0,0.08)',
+        'bottomBar': '0 -1px 0 rgba(0,0,0,0.04), 0 -8px 32px rgba(0,0,0,0.06)',
+        'fab': '0 6px 28px -4px rgba(0,0,0,0.2), 0 2px 8px -2px rgba(0,0,0,0.1)',
       },
       borderRadius: {
         '4xl': '2rem',
+        '5xl': '2.5rem',
       },
-      transitionDuration: {
-        '400': '400ms',
+      transitionTimingFunction: {
+        'bounce-in': 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+        'apple': 'cubic-bezier(0.25, 0.1, 0.25, 1)',
       },
       animation: {
-        'shimmer': 'shimmer 2s ease-in-out infinite',
-        'float': 'float 3s ease-in-out infinite',
+        'pulse-soft': 'pulseSoft 2.5s ease-in-out infinite',
+        'slide-up': 'slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
       },
       keyframes: {
-        shimmer: {
-          '0%, 100%': { opacity: 0.4 },
-          '50%': { opacity: 0.7 },
+        pulseSoft: {
+          '0%, 100%': { opacity: '0.3' },
+          '50%': { opacity: '0.6' },
         },
-        float: {
-          '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-4px)' },
+        slideUp: {
+          '0%': { opacity: '0', transform: 'translateY(16px) scale(0.97)' },
+          '100%': { opacity: '1', transform: 'translateY(0) scale(1)' },
         },
       },
     },

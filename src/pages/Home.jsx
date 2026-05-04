@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { collection, query, orderBy, limit, getDocs, where, startAfter } from 'firebase/firestore';
 import { db } from '../lib/firebase';
-import { Search, SlidersHorizontal } from 'lucide-react';
+import { Search, ArrowUpDown } from 'lucide-react';
 import ListingCard from '../components/ListingCard';
 import ListingSkeleton from '../components/ListingSkeleton';
 import EmptyState from '../components/EmptyState';
@@ -30,14 +30,14 @@ export default function Home() {
   const [lastVisible, setLastVisible] = useState(null);
   const [hasMore, setHasMore] = useState(true);
 
-  // Filters
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const [activeCategory, setActiveCategory] = useState('all');
   const [activeSort, setActiveSort] = useState('newest');
   const [showSort, setShowSort] = useState(false);
+  const [searchFocused, setSearchFocused] = useState(false);
 
-  const ITEMS_PER_PAGE = 10;
+  const ITEMS_PER_PAGE = 12;
 
   useEffect(() => {
     fetchListings();
@@ -55,9 +55,6 @@ export default function Home() {
       let q = collection(db, 'listings');
       let constraints = [];
 
-      // Only show non-expired items (this requires a compound index or we handle it client-side if missing index)
-      // For simplicity in a free-tier app without predefined indexes, we'll fetch all and filter expired locally, 
-      // OR rely on a simple query. The prompt says "Listings older than 30 days are automatically hidden... filter out in query".
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
       constraints.push(where('createdAt', '>=', thirtyDaysAgo));
@@ -70,7 +67,6 @@ export default function Home() {
       if (activeSort === 'priceAsc') constraints.push(orderBy('price', 'asc'));
       if (activeSort === 'priceDesc') constraints.push(orderBy('price', 'desc'));
 
-      // If load more, start after last document
       if (isLoadMore && lastVisible) {
         constraints.push(startAfter(lastVisible));
       }
@@ -89,7 +85,6 @@ export default function Home() {
         ...doc.data()
       }));
 
-      // Client-side search (since Firestore doesn't have native full-text search)
       if (debouncedSearchTerm) {
         const lowerSearch = debouncedSearchTerm.toLowerCase();
         fetchedListings = fetchedListings.filter(item => 
@@ -105,14 +100,12 @@ export default function Home() {
       }
     } catch (error) {
       console.error("Error fetching listings:", error);
-      // Fallback for missing indexes - fetch basic and sort locally
       if (error.message.includes('index')) {
         console.warn("Index missing. Falling back to basic query.");
         const basicQuery = query(collection(db, 'listings'), limit(50));
         const snap = await getDocs(basicQuery);
         let data = snap.docs.map(d => ({id: d.id, ...d.data()}));
         
-        // Local filter & sort
         if (activeCategory !== 'all') data = data.filter(i => i.category === activeCategory);
         if (activeSort === 'newest') data.sort((a,b) => b.createdAt - a.createdAt);
         if (activeSort === 'priceAsc') data.sort((a,b) => a.price - b.price);
@@ -130,46 +123,68 @@ export default function Home() {
       setLoading(false);
       setLoadingMore(false);
     }
-  };
+  }
 
   return (
-    <div className="flex flex-col gap-5">
-      {/* Search and Sort Bar */}
-      <div className="flex flex-col sm:flex-row gap-3">
+    <div className="flex flex-col gap-4">
+
+      {/* ═══════════════════════════════════════════
+          SEARCH BAR — Plush, inner-shadow, Apple Spotlight feel
+          ═══════════════════════════════════════════ */}
+      <div className="flex gap-2.5">
         <div className="relative flex-1">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-textMuted" size={18} />
-          <input 
-            type="text" 
+          <Search 
+            className={clsx(
+              "absolute left-3.5 top-1/2 -translate-y-1/2 transition-colors duration-200",
+              searchFocused ? "text-blue" : "text-labelTertiary"
+            )} 
+            size={17} 
+            strokeWidth={2} 
+          />
+          <input
+            type="text"
             placeholder={t('home.searchPlaceholder')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-white rounded-xl py-3 pl-11 pr-4 text-sm text-textMain placeholder:text-textMuted/50 focus:outline-none focus:ring-2 focus:ring-accent/15 focus:border-accent border border-border shadow-input transition-all duration-300"
+            onFocus={() => setSearchFocused(true)}
+            onBlur={() => setSearchFocused(false)}
+            className={clsx(
+              "w-full rounded-2xl py-3 pl-10 pr-4 text-[15px] text-label placeholder:text-labelTertiary/60 transition-all duration-300 ease-apple border-none outline-none",
+              searchFocused
+                ? "bg-card shadow-float ring-2 ring-blue/20"
+                : "bg-pill/40 shadow-searchInset"
+            )}
           />
         </div>
         
+        {/* Sort toggle */}
         <div className="relative">
-          <button 
+          <button
             onClick={() => setShowSort(!showSort)}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white border border-border hover:border-borderHover px-4 py-3 rounded-xl transition-all duration-200 text-sm font-medium text-textSecondary hover:text-textMain shadow-card"
+            className="h-full aspect-square flex items-center justify-center bg-pill/40 hover:bg-pill rounded-2xl transition-all duration-200 ease-apple press text-labelTertiary hover:text-label"
           >
-            <SlidersHorizontal size={16} />
-            <span className="sm:hidden lg:inline">{t(`sort.${activeSort}`)}</span>
+            <ArrowUpDown size={17} strokeWidth={2} />
           </button>
           
           {showSort && (
-            <div className="absolute right-0 mt-1.5 w-48 bg-white rounded-xl shadow-dropdown overflow-hidden z-20 border border-border/50 py-1">
+            <div className="absolute right-0 mt-2 w-52 bg-card rounded-2xl shadow-dropdownApple overflow-hidden z-20 py-1 animate-slide-up">
               {sorts.map(sort => (
                 <button
                   key={sort}
                   onClick={() => { setActiveSort(sort); setShowSort(false); }}
                   className={clsx(
-                    "w-full text-left px-4 py-2.5 text-sm transition-colors duration-150",
-                    activeSort === sort 
-                      ? "text-accent font-semibold bg-accent/5" 
-                      : "text-textSecondary hover:bg-surfaceHover hover:text-textMain"
+                    "w-full text-left px-4 py-3 text-[13px] font-medium transition-colors duration-150 flex items-center justify-between",
+                    activeSort === sort
+                      ? "text-blue bg-blue/5"
+                      : "text-label hover:bg-bg"
                   )}
                 >
-                  {t(`sort.${sort}`)}
+                  <span>{t(`sort.${sort}`)}</span>
+                  {activeSort === sort && (
+                    <svg className="w-3.5 h-3.5 text-blue" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  )}
                 </button>
               ))}
             </div>
@@ -177,17 +192,19 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Category Pills */}
+      {/* ═══════════════════════════════════════════
+          CATEGORY TOGGLES — iOS Control Center style
+          ═══════════════════════════════════════════ */}
       <div className="flex overflow-x-auto no-scrollbar gap-2 pb-1 -mx-4 px-4 sm:-mx-6 sm:px-6 md:mx-0 md:px-0">
         {categories.map(cat => (
           <button
             key={cat}
             onClick={() => setActiveCategory(cat)}
             className={clsx(
-              "whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium transition-all duration-200",
-              activeCategory === cat 
-                ? "bg-primary text-white shadow-sm" 
-                : "bg-white text-textMuted hover:text-textMain hover:bg-surfaceHover border border-border/60"
+              "ios-segment whitespace-nowrap",
+              activeCategory === cat
+                ? "ios-segment-active"
+                : "ios-segment-inactive"
             )}
           >
             {t(`categories.${cat}`)}
@@ -195,27 +212,51 @@ export default function Home() {
         ))}
       </div>
 
-      {/* Grid */}
+      {/* ═══════════════════════════════════════════
+          PRODUCT GRID — Bento Box / Asymmetric Masonry
+          First item = featured (span 2 cols on md+)
+          ═══════════════════════════════════════════ */}
       {loading ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
-          {[...Array(8)].map((_, i) => <ListingSkeleton key={i} />)}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+          <div className="md:col-span-2 md:row-span-2">
+            <ListingSkeleton featured />
+          </div>
+          {[...Array(7)].map((_, i) => <ListingSkeleton key={i} />)}
         </div>
       ) : listings.length > 0 ? (
         <>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
-            {listings.map(item => (
-              <ListingCard key={item.id} item={item} />
-            ))}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 auto-rows-fr">
+            {listings.map((item, index) => {
+              // First item gets featured treatment on desktop
+              const isFeatured = index === 0;
+              return (
+                <div
+                  key={item.id}
+                  className={clsx(
+                    isFeatured && "md:col-span-2 md:row-span-2"
+                  )}
+                >
+                  <ListingCard item={item} featured={isFeatured} />
+                </div>
+              );
+            })}
           </div>
-          
+
           {hasMore && (
-            <div className="flex justify-center mt-6">
-              <button 
+            <div className="flex justify-center mt-4 mb-2">
+              <button
                 onClick={() => fetchListings(true)}
                 disabled={loadingMore}
-                className="bg-white border border-border hover:border-borderHover text-textSecondary hover:text-textMain px-8 py-3 rounded-xl text-sm font-medium transition-all duration-200 disabled:opacity-50 shadow-card hover:shadow-elevated"
+                className="bg-card hover:bg-cardHover text-labelSecondary px-8 py-3 rounded-full text-[13px] font-semibold transition-all duration-200 ease-apple disabled:opacity-40 shadow-card hover:shadow-float press"
               >
-                {loadingMore ? '...' : t('home.loadMore')}
+                {loadingMore ? (
+                  <span className="flex items-center gap-2">
+                    <svg className="animate-spin h-3.5 w-3.5" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                  </span>
+                ) : t('home.loadMore')}
               </button>
             </div>
           )}

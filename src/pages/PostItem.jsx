@@ -12,7 +12,6 @@ import ListingCard from '../components/ListingCard';
 
 const categories = ['electronics', 'books', 'clothing', 'furniture', 'food', 'other'];
 const conditions = ['new', 'likeNew', 'good', 'fair'];
-const dormBlocks = ['Block A', 'Block B', 'Block C', 'Block D', 'Other'];
 
 export default function PostItem() {
   const { t } = useTranslation();
@@ -24,9 +23,8 @@ export default function PostItem() {
   const [successId, setSuccessId] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
 
-  // Form State
-  const [photos, setPhotos] = useState([]); // Array of File objects
-  const [photoPreviews, setPhotoPreviews] = useState([]); // Array of ObjectURLs
+  const [photos, setPhotos] = useState([]);
+  const [photoPreviews, setPhotoPreviews] = useState([]);
   const [title, setTitle] = useState('');
   const [price, setPrice] = useState('');
   const [category, setCategory] = useState(categories[0]);
@@ -49,13 +47,7 @@ export default function PostItem() {
 
     for (let file of files) {
       if (!file.type.startsWith('image/')) continue;
-      
-      const options = {
-        maxSizeMB: 0.5,
-        maxWidthOrHeight: 1080,
-        useWebWorker: true
-      };
-      
+      const options = { maxSizeMB: 0.5, maxWidthOrHeight: 1080, useWebWorker: true };
       try {
         const compressedFile = await imageCompression(file, options);
         newPhotos.push(compressedFile);
@@ -96,36 +88,28 @@ export default function PostItem() {
     setLoading(true);
     setErrorMsg(null);
     try {
-      // 1. Upload photos to ImgBB
       const photoUrls = [];
       const IMGBB_API_KEY = "b45fad18684cd1affa8f9aea6c62f471";
       
       for (let file of photos) {
         const formData = new FormData();
         formData.append("image", file);
-        
         const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
-          method: 'POST',
-          body: formData
+          method: 'POST', body: formData
         });
-        
         const data = await response.json();
         if (data && data.success) {
           photoUrls.push(data.data.display_url);
         } else {
-          throw new Error("Şəkil yüklənərkən xəta baş verdi / ImgBB upload failed");
+          throw new Error("ImgBB upload failed");
         }
       }
 
-      // 2. Generate Seller Token
       const sellerToken = uuidv4();
-
-      // 3. Save to Firestore
       const docData = {
         title: title.trim(),
         price: Number(price),
-        category,
-        condition,
+        category, condition,
         description: description.trim(),
         firstName: firstName.trim(),
         roomNumber: roomNumber.trim(),
@@ -139,7 +123,6 @@ export default function PostItem() {
 
       const docRef = await addDoc(collection(db, 'listings'), docData);
 
-      // 4. Save token to localStorage
       const existingTokens = JSON.parse(localStorage.getItem('dormbazar_seller_tokens') || '[]');
       existingTokens.push(sellerToken);
       localStorage.setItem('dormbazar_seller_tokens', JSON.stringify(existingTokens));
@@ -153,10 +136,8 @@ export default function PostItem() {
     }
   };
 
-  // Previews for Step 3
   const previewItem = {
-    id: 'preview',
-    title,
+    id: 'preview', title,
     price: Number(price) || 0,
     category,
     photos: photoPreviews,
@@ -168,33 +149,34 @@ export default function PostItem() {
   return (
     <div className="max-w-xl mx-auto">
       {successId ? (
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
+        /* ═══ SUCCESS STATE ═══ */
+        <motion.div
+          initial={{ opacity: 0, scale: 0.92 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ type: 'spring', damping: 20, stiffness: 200 }}
-          className="bg-white rounded-2xl p-8 text-center flex flex-col items-center shadow-card"
+          className="bg-card rounded-3xl p-8 text-center flex flex-col items-center"
         >
-          <div className="w-16 h-16 bg-success/10 text-success rounded-2xl flex items-center justify-center mb-6">
+          <div className="w-16 h-16 bg-green/10 text-green rounded-full flex items-center justify-center mb-5">
             <CheckCircle2 size={36} strokeWidth={1.5} />
           </div>
-          <h2 className="text-xl font-bold text-textMain mb-2">{t('post.success')}</h2>
-          <p className="text-sm text-textMuted mb-8">{t('post.successDesc')}</p>
-          
+          <h2 className="text-[20px] font-bold text-label mb-1.5">{t('post.success')}</h2>
+          <p className="text-[14px] text-labelTertiary mb-8">{t('post.successDesc')}</p>
+
           <div className="flex flex-col sm:flex-row gap-3 w-full">
-            <button 
+            <button
               onClick={() => {
                 const url = `${window.location.origin}/item/${successId}`;
-                const text = `Check out my listing on DormBazar: ${title}\n${url}`;
+                const text = `Check out my listing on Gadorm: ${title}\n${url}`;
                 window.location.href = `https://wa.me/?text=${encodeURIComponent(text)}`;
               }}
-              className="flex-1 flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5c] text-white px-5 py-3 rounded-xl font-semibold text-sm transition-all duration-300 shadow-sm active:scale-[0.97]"
+              className="flex-1 flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#1FAD55] text-white px-5 py-3.5 rounded-2xl font-semibold text-[14px] transition-all duration-200 ease-apple press"
             >
-              <Share2 size={18} />
+              <Share2 size={17} />
               {t('post.shareWhatsApp')}
             </button>
-            <button 
+            <button
               onClick={() => navigate(`/item/${successId}`)}
-              className="flex-1 bg-surfaceHover hover:bg-surfaceActive text-textSecondary px-5 py-3 rounded-xl font-semibold text-sm transition-colors duration-200"
+              className="flex-1 bg-pill/60 hover:bg-pill text-label px-5 py-3.5 rounded-2xl font-semibold text-[14px] transition-colors duration-200 press"
             >
               {t('post.viewListing')}
             </button>
@@ -202,122 +184,109 @@ export default function PostItem() {
         </motion.div>
       ) : (
         <>
-          {/* Progress Bar */}
-          <div className="flex gap-2 mb-6">
+          {/* ═══ PROGRESS BAR ═══ */}
+          <div className="flex gap-1.5 mb-5">
             {[1, 2, 3].map(i => (
-              <div 
-                key={i} 
+              <div
+                key={i}
                 className={clsx(
-                  "h-1 flex-1 rounded-full transition-all duration-500",
-                  step >= i ? "bg-primary" : "bg-border"
+                  "h-[3px] flex-1 rounded-full transition-all duration-500 ease-apple",
+                  step >= i ? "bg-blue" : "bg-pill"
                 )}
               />
             ))}
           </div>
 
-          <div className="bg-white rounded-2xl p-5 sm:p-6 lg:p-8 shadow-card overflow-hidden">
+          {/* ═══ FORM CARD ═══ */}
+          <div className="bg-card rounded-3xl p-5 sm:p-6 overflow-hidden">
             <AnimatePresence mode="wait">
+
+              {/* ── STEP 1 ── */}
               {step === 1 && (
-                <motion.div 
+                <motion.div
                   key="step1"
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.25 }}
+                  transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
                   className="flex flex-col gap-5"
                 >
-                  <h2 className="text-lg font-bold text-textMain">{t('post.step1')}</h2>
-                  
+                  <h2 className="text-[17px] font-bold text-label">{t('post.step1')}</h2>
+
                   {/* Photos */}
                   <div>
-                    <label className="block text-xs font-medium text-textMuted uppercase tracking-wider mb-2.5">
+                    <label className="block text-[11px] font-semibold text-labelTertiary tracking-[0.08em] uppercase mb-2.5">
                       {t('post.photosLimit', { count: photos.length })}
                     </label>
-                    <div className="flex gap-3 overflow-x-auto pb-2">
+                    <div className="flex gap-2.5 overflow-x-auto pb-1 no-scrollbar">
                       {photoPreviews.map((url, i) => (
-                        <div key={i} className="relative w-24 h-24 shrink-0 rounded-xl overflow-hidden shadow-card">
+                        <div key={i} className="relative w-[88px] h-[88px] shrink-0 rounded-2xl overflow-hidden">
                           <img src={url} alt="preview" className="w-full h-full object-cover" />
-                          <button 
+                          <button
                             onClick={() => removePhoto(i)}
-                            className="absolute top-1.5 right-1.5 bg-black/50 text-white p-1 rounded-lg hover:bg-error transition-colors duration-200"
+                            className="absolute top-1.5 right-1.5 w-6 h-6 flex items-center justify-center bg-black/50 backdrop-blur-md text-white rounded-full hover:bg-red transition-colors duration-150 press"
                           >
-                            <X size={12} />
+                            <X size={12} strokeWidth={3} />
                           </button>
                         </div>
                       ))}
                       {photos.length < 3 && (
-                        <button 
+                        <button
                           onClick={() => fileInputRef.current?.click()}
-                          className="w-24 h-24 shrink-0 rounded-xl border-2 border-dashed border-border hover:border-accent text-textMuted hover:text-accent flex flex-col items-center justify-center gap-1 transition-all duration-200"
+                          className="w-[88px] h-[88px] shrink-0 rounded-2xl border-2 border-dashed border-pill hover:border-blue text-labelTertiary hover:text-blue flex flex-col items-center justify-center transition-all duration-200 press"
                         >
-                          <Upload size={20} strokeWidth={1.5} />
+                          <Upload size={22} strokeWidth={1.5} />
                         </button>
                       )}
                     </div>
-                    <input 
-                      type="file" 
-                      accept="image/*" 
-                      multiple 
-                      className="hidden" 
-                      ref={fileInputRef}
-                      onChange={handlePhotoUpload}
-                    />
+                    <input type="file" accept="image/*" multiple className="hidden" ref={fileInputRef} onChange={handlePhotoUpload} />
                   </div>
 
                   {/* Title */}
                   <div>
-                    <label className="flex items-center justify-between text-xs font-medium text-textMuted uppercase tracking-wider mb-2">
+                    <label className="flex items-center justify-between text-[11px] font-semibold text-labelTertiary tracking-[0.08em] uppercase mb-2">
                       <span>{t('post.title')}</span>
-                      <span className="text-textLight normal-case tracking-normal">{title.length}/60</span>
+                      <span className="text-labelQuaternary normal-case tracking-normal font-normal">{title.length}/60</span>
                     </label>
-                    <input 
-                      type="text" 
-                      maxLength={60}
-                      value={title}
+                    <input
+                      type="text" maxLength={60} value={title}
                       onChange={e => setTitle(e.target.value)}
                       placeholder={t('post.titlePlaceholder')}
-                      className="w-full bg-surfaceHover border border-border rounded-xl px-4 py-3 text-sm text-textMain placeholder:text-textMuted/50 focus:outline-none focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all duration-200"
+                      className="ios-input"
                     />
                   </div>
 
                   {/* Category & Price */}
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-medium text-textMuted uppercase tracking-wider mb-2">{t('post.categoryLabel')}</label>
-                      <select 
-                        value={category}
-                        onChange={e => setCategory(e.target.value)}
-                        className="w-full bg-surfaceHover border border-border rounded-xl px-4 py-3 text-sm text-textMain focus:outline-none focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all duration-200 appearance-none cursor-pointer"
-                      >
+                      <label className="block text-[11px] font-semibold text-labelTertiary tracking-[0.08em] uppercase mb-2">
+                        {t('post.categoryLabel')}
+                      </label>
+                      <select value={category} onChange={e => setCategory(e.target.value)} className="ios-input appearance-none cursor-pointer">
                         {categories.map(c => <option key={c} value={c}>{t(`categories.${c}`)}</option>)}
                       </select>
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-textMuted uppercase tracking-wider mb-2">{t('post.price')}</label>
-                      <input 
-                        type="number" 
-                        min="0"
-                        value={price}
-                        onChange={e => setPrice(e.target.value)}
-                        placeholder="0"
-                        className="w-full bg-surfaceHover border border-border rounded-xl px-4 py-3 text-sm text-textMain focus:outline-none focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all duration-200"
-                      />
+                      <label className="block text-[11px] font-semibold text-labelTertiary tracking-[0.08em] uppercase mb-2">
+                        {t('post.price')}
+                      </label>
+                      <input type="number" min="0" value={price} onChange={e => setPrice(e.target.value)} placeholder="0" className="ios-input" />
                     </div>
                   </div>
 
                   {/* Condition */}
                   <div>
-                    <label className="block text-xs font-medium text-textMuted uppercase tracking-wider mb-2">{t('post.condition')}</label>
+                    <label className="block text-[11px] font-semibold text-labelTertiary tracking-[0.08em] uppercase mb-2">
+                      {t('post.condition')}
+                    </label>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                       {conditions.map(c => (
                         <button
                           key={c}
                           onClick={() => setCondition(c)}
                           className={clsx(
-                            "px-3 py-2.5 rounded-xl text-xs font-medium transition-all duration-200",
-                            condition === c 
-                              ? "bg-primary text-white shadow-sm" 
-                              : "bg-surfaceHover text-textMuted hover:text-textMain hover:bg-surfaceActive border border-transparent"
+                            "ios-segment text-[12px]",
+                            condition === c ? "ios-segment-active" : "ios-segment-inactive"
                           )}
                         >
                           {t(`post.conditions.${c}`)}
@@ -326,119 +295,94 @@ export default function PostItem() {
                     </div>
                   </div>
 
-                  <button 
+                  <button
                     disabled={!validateStep1()}
                     onClick={() => setStep(2)}
-                    className="mt-2 w-full bg-primary hover:bg-primaryHover text-white py-3.5 rounded-xl font-semibold text-sm transition-all duration-300 disabled:opacity-40 disabled:hover:bg-primary flex items-center justify-center gap-2 active:scale-[0.98]"
+                    className="mt-1 w-full bg-blue hover:bg-blueHover text-white py-3.5 rounded-2xl font-semibold text-[15px] transition-all duration-200 ease-apple disabled:opacity-30 flex items-center justify-center gap-1.5 press"
                   >
                     {t('post.next')} <ChevronRight size={18} />
                   </button>
                 </motion.div>
               )}
 
+              {/* ── STEP 2 ── */}
               {step === 2 && (
-                <motion.div 
+                <motion.div
                   key="step2"
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.25 }}
+                  transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
                   className="flex flex-col gap-5"
                 >
                   <div className="flex items-center gap-3">
-                    <button onClick={() => setStep(1)} className="p-2 hover:bg-surfaceHover rounded-xl text-textMuted transition-colors duration-200">
+                    <button onClick={() => setStep(1)} className="w-9 h-9 flex items-center justify-center hover:bg-pill/50 rounded-full text-labelTertiary transition-colors duration-150 press">
                       <ChevronLeft size={20} />
                     </button>
-                    <h2 className="text-lg font-bold text-textMain">{t('post.step2')}</h2>
+                    <h2 className="text-[17px] font-bold text-label">{t('post.step2')}</h2>
                   </div>
 
                   <div>
-                    <label className="flex items-center justify-between text-xs font-medium text-textMuted uppercase tracking-wider mb-2">
+                    <label className="flex items-center justify-between text-[11px] font-semibold text-labelTertiary tracking-[0.08em] uppercase mb-2">
                       <span>{t('post.description')}</span>
-                      <span className="text-textLight normal-case tracking-normal">{description.length}/300</span>
+                      <span className="text-labelQuaternary normal-case tracking-normal font-normal">{description.length}/300</span>
                     </label>
-                    <textarea 
-                      maxLength={300}
-                      rows={4}
-                      value={description}
-                      onChange={e => setDescription(e.target.value)}
-                      placeholder={t('post.descPlaceholder')}
-                      className="w-full bg-surfaceHover border border-border rounded-xl px-4 py-3 text-sm text-textMain placeholder:text-textMuted/50 focus:outline-none focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all duration-200 resize-none"
-                    />
+                    <textarea maxLength={300} rows={4} value={description} onChange={e => setDescription(e.target.value)} placeholder={t('post.descPlaceholder')} className="ios-input resize-none" />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-medium text-textMuted uppercase tracking-wider mb-2">{t('post.firstName')}</label>
-                    <input 
-                      type="text" 
-                      maxLength={20}
-                      value={firstName}
-                      onChange={e => setFirstName(e.target.value)}
-                      className="w-full bg-surfaceHover border border-border rounded-xl px-4 py-3 text-sm text-textMain focus:outline-none focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all duration-200"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-medium text-textMuted uppercase tracking-wider mb-2">Room Number</label>
-                      <input 
-                        type="text" 
-                        maxLength={4}
-                        value={roomNumber}
-                        onChange={e => setRoomNumber(e.target.value.replace(/\D/g, ''))}
-                        className="w-full bg-surfaceHover border border-border rounded-xl px-4 py-3 text-sm text-textMain focus:outline-none focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all duration-200"
-                      />
-                    </div>
+                    <label className="block text-[11px] font-semibold text-labelTertiary tracking-[0.08em] uppercase mb-2">{t('post.firstName')}</label>
+                    <input type="text" maxLength={20} value={firstName} onChange={e => setFirstName(e.target.value)} className="ios-input" />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-medium text-textMuted uppercase tracking-wider mb-2">{t('post.whatsappNumber')}</label>
-                    <input 
-                      type="tel" 
-                      value={whatsappNumber}
-                      onChange={e => setWhatsappNumber(e.target.value)}
-                      placeholder="+7 777 000 0000"
-                      className="w-full bg-surfaceHover border border-border rounded-xl px-4 py-3 text-sm text-textMain focus:outline-none focus:ring-2 focus:ring-accent/15 focus:border-accent transition-all duration-200"
-                    />
-                    <p className="text-[11px] text-textMuted mt-2">{t('post.whatsappNote')}</p>
+                    <label className="block text-[11px] font-semibold text-labelTertiary tracking-[0.08em] uppercase mb-2">Room Number</label>
+                    <input type="text" maxLength={4} value={roomNumber} onChange={e => setRoomNumber(e.target.value.replace(/\D/g, ''))} className="ios-input" />
                   </div>
 
-                  <button 
+                  <div>
+                    <label className="block text-[11px] font-semibold text-labelTertiary tracking-[0.08em] uppercase mb-2">{t('post.whatsappNumber')}</label>
+                    <input type="tel" value={whatsappNumber} onChange={e => setWhatsappNumber(e.target.value)} placeholder="+7 777 000 0000" className="ios-input" />
+                    <p className="text-[11px] text-labelTertiary mt-1.5">{t('post.whatsappNote')}</p>
+                  </div>
+
+                  <button
                     disabled={!validateStep2()}
                     onClick={() => setStep(3)}
-                    className="mt-2 w-full bg-primary hover:bg-primaryHover text-white py-3.5 rounded-xl font-semibold text-sm transition-all duration-300 disabled:opacity-40 disabled:hover:bg-primary flex items-center justify-center gap-2 active:scale-[0.98]"
+                    className="mt-1 w-full bg-blue hover:bg-blueHover text-white py-3.5 rounded-2xl font-semibold text-[15px] transition-all duration-200 ease-apple disabled:opacity-30 flex items-center justify-center gap-1.5 press"
                   >
                     {t('post.preview')} <ChevronRight size={18} />
                   </button>
                 </motion.div>
               )}
 
+              {/* ── STEP 3 ── */}
               {step === 3 && (
-                <motion.div 
+                <motion.div
                   key="step3"
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.25 }}
+                  transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
                   className="flex flex-col gap-5"
                 >
                   <div className="flex items-center gap-3">
-                    <button onClick={() => setStep(2)} className="p-2 hover:bg-surfaceHover rounded-xl text-textMuted transition-colors duration-200">
+                    <button onClick={() => setStep(2)} className="w-9 h-9 flex items-center justify-center hover:bg-pill/50 rounded-full text-labelTertiary transition-colors duration-150 press">
                       <ChevronLeft size={20} />
                     </button>
-                    <h2 className="text-lg font-bold text-textMain">{t('post.step3')}</h2>
+                    <h2 className="text-[17px] font-bold text-label">{t('post.step3')}</h2>
                   </div>
 
-                  <div className="bg-background p-4 rounded-2xl flex justify-center">
-                    <div className="w-full max-w-[260px]">
+                  <div className="bg-bg p-4 rounded-2xl flex justify-center">
+                    <div className="w-full max-w-[240px]">
                       <ListingCard item={previewItem} />
                     </div>
                   </div>
 
-                  <button 
+                  <button
                     onClick={handleSubmit}
                     disabled={loading}
-                    className="w-full bg-primary hover:bg-primaryHover text-white py-3.5 rounded-xl font-semibold text-sm transition-all duration-300 shadow-sm hover:shadow-elevated active:scale-[0.98] flex items-center justify-center disabled:opacity-50"
+                    className="w-full bg-blue hover:bg-blueHover text-white py-3.5 rounded-2xl font-semibold text-[15px] transition-all duration-200 ease-apple flex items-center justify-center disabled:opacity-40 press"
                   >
                     {loading ? (
                       <span className="flex items-center gap-2">
@@ -452,7 +396,7 @@ export default function PostItem() {
                   </button>
 
                   {errorMsg && (
-                    <div className="mt-2 p-4 bg-error/5 border border-error/15 rounded-xl text-error text-xs font-medium leading-relaxed">
+                    <div className="p-4 bg-red/5 rounded-2xl text-red text-[12px] font-medium leading-relaxed">
                       {errorMsg}
                     </div>
                   )}
