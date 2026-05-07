@@ -123,9 +123,9 @@ export default function PostItem() {
 
       const docRef = await addDoc(collection(db, 'listings'), docData);
 
-      const existingTokens = JSON.parse(localStorage.getItem('dormbazar_seller_tokens') || '[]');
+      const existingTokens = JSON.parse(localStorage.getItem('aktaudorm_seller_tokens') || '[]');
       existingTokens.push(sellerToken);
-      localStorage.setItem('dormbazar_seller_tokens', JSON.stringify(existingTokens));
+      localStorage.setItem('aktaudorm_seller_tokens', JSON.stringify(existingTokens));
 
       setSuccessId(docRef.id);
     } catch (error) {
@@ -147,7 +147,12 @@ export default function PostItem() {
   };
 
   return (
-    <div className="max-w-xl mx-auto">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ type: 'spring', damping: 22, stiffness: 260 }}
+      className="max-w-xl mx-auto"
+    >
       {successId ? (
         /* ═══ SUCCESS STATE ═══ */
         <motion.div
@@ -166,7 +171,7 @@ export default function PostItem() {
             <button
               onClick={() => {
                 const url = `${window.location.origin}/item/${successId}`;
-                const text = `Check out my listing on Gadorm: ${title}\n${url}`;
+                const text = `Check out my listing on AktauDorm: ${title}\n${url}`;
                 window.location.href = `https://wa.me/?text=${encodeURIComponent(text)}`;
               }}
               className="flex-1 flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#1FAD55] text-white px-5 py-3.5 rounded-2xl font-semibold text-[14px] transition-all duration-200 ease-apple press"
@@ -187,8 +192,12 @@ export default function PostItem() {
           {/* ═══ PROGRESS BAR ═══ */}
           <div className="flex gap-1.5 mb-5">
             {[1, 2, 3].map(i => (
-              <div
+              <motion.div
                 key={i}
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ delay: i * 0.1, type: 'spring', damping: 20, stiffness: 300 }}
+                style={{ originX: 0 }}
                 className={clsx(
                   "h-[3px] flex-1 rounded-full transition-all duration-500 ease-apple",
                   step >= i ? "bg-blue" : "bg-pill"
@@ -205,10 +214,10 @@ export default function PostItem() {
               {step === 1 && (
                 <motion.div
                   key="step1"
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+                  initial={{ opacity: 0, x: -30, scale: 0.98 }}
+                  animate={{ opacity: 1, x: 0, scale: 1 }}
+                  exit={{ opacity: 0, x: 30, scale: 0.98 }}
+                  transition={{ type: 'spring', damping: 24, stiffness: 300 }}
                   className="flex flex-col gap-5"
                 >
                   <h2 className="text-[17px] font-bold text-label">{t('post.step1')}</h2>
@@ -295,13 +304,15 @@ export default function PostItem() {
                     </div>
                   </div>
 
-                  <button
+                  <motion.button
+                    whileHover={{ scale: 1.02, y: -1 }}
+                    whileTap={{ scale: 0.96 }}
                     disabled={!validateStep1()}
                     onClick={() => setStep(2)}
-                    className="mt-1 w-full bg-blue hover:bg-blueHover text-white py-3.5 rounded-2xl font-semibold text-[15px] transition-all duration-200 ease-apple disabled:opacity-30 flex items-center justify-center gap-1.5 press"
+                    className="mt-1 w-full bg-blue hover:bg-blueHover text-white py-3.5 rounded-2xl font-semibold text-[15px] transition-all duration-200 ease-apple disabled:opacity-30 flex items-center justify-center gap-1.5"
                   >
                     {t('post.next')} <ChevronRight size={18} />
-                  </button>
+                  </motion.button>
                 </motion.div>
               )}
 
@@ -309,10 +320,10 @@ export default function PostItem() {
               {step === 2 && (
                 <motion.div
                   key="step2"
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+                  initial={{ opacity: 0, x: -30, scale: 0.98 }}
+                  animate={{ opacity: 1, x: 0, scale: 1 }}
+                  exit={{ opacity: 0, x: 30, scale: 0.98 }}
+                  transition={{ type: 'spring', damping: 24, stiffness: 300 }}
                   className="flex flex-col gap-5"
                 >
                   <div className="flex items-center gap-3">
@@ -346,13 +357,15 @@ export default function PostItem() {
                     <p className="text-[11px] text-labelTertiary mt-1.5">{t('post.whatsappNote')}</p>
                   </div>
 
-                  <button
+                  <motion.button
+                    whileHover={{ scale: 1.02, y: -1 }}
+                    whileTap={{ scale: 0.96 }}
                     disabled={!validateStep2()}
                     onClick={() => setStep(3)}
-                    className="mt-1 w-full bg-blue hover:bg-blueHover text-white py-3.5 rounded-2xl font-semibold text-[15px] transition-all duration-200 ease-apple disabled:opacity-30 flex items-center justify-center gap-1.5 press"
+                    className="mt-1 w-full bg-blue hover:bg-blueHover text-white py-3.5 rounded-2xl font-semibold text-[15px] transition-all duration-200 ease-apple disabled:opacity-30 flex items-center justify-center gap-1.5"
                   >
                     {t('post.preview')} <ChevronRight size={18} />
-                  </button>
+                  </motion.button>
                 </motion.div>
               )}
 
@@ -360,10 +373,10 @@ export default function PostItem() {
               {step === 3 && (
                 <motion.div
                   key="step3"
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+                  initial={{ opacity: 0, x: -30, scale: 0.98 }}
+                  animate={{ opacity: 1, x: 0, scale: 1 }}
+                  exit={{ opacity: 0, x: 30, scale: 0.98 }}
+                  transition={{ type: 'spring', damping: 24, stiffness: 300 }}
                   className="flex flex-col gap-5"
                 >
                   <div className="flex items-center gap-3">
@@ -379,10 +392,12 @@ export default function PostItem() {
                     </div>
                   </div>
 
-                  <button
+                  <motion.button
+                    whileHover={{ scale: 1.02, y: -1 }}
+                    whileTap={{ scale: 0.96 }}
                     onClick={handleSubmit}
                     disabled={loading}
-                    className="w-full bg-blue hover:bg-blueHover text-white py-3.5 rounded-2xl font-semibold text-[15px] transition-all duration-200 ease-apple flex items-center justify-center disabled:opacity-40 press"
+                    className="w-full bg-blue hover:bg-blueHover text-white py-3.5 rounded-2xl font-semibold text-[15px] transition-all duration-200 ease-apple flex items-center justify-center disabled:opacity-40 cta-glow"
                   >
                     {loading ? (
                       <span className="flex items-center gap-2">
@@ -393,7 +408,7 @@ export default function PostItem() {
                         {t('post.publishing')}
                       </span>
                     ) : t('post.publish')}
-                  </button>
+                  </motion.button>
 
                   {errorMsg && (
                     <div className="p-4 bg-red/5 rounded-2xl text-red text-[12px] font-medium leading-relaxed">
@@ -406,6 +421,6 @@ export default function PostItem() {
           </div>
         </>
       )}
-    </div>
+    </motion.div>
   );
 }

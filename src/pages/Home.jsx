@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { motion, AnimatePresence } from 'framer-motion';
 import { collection, query, orderBy, limit, getDocs, where, startAfter } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { Search, ArrowUpDown } from 'lucide-react';
@@ -20,6 +21,61 @@ function useDebounce(value, delay) {
   }, [value, delay]);
   return debouncedValue;
 }
+
+// ── Motion variants ──────────────────────────────────────
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 24, scale: 0.97 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      type: 'spring',
+      damping: 22,
+      stiffness: 260,
+    },
+  },
+};
+
+const filterBarVariants = {
+  hidden: { opacity: 0, y: -16 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: 'spring',
+      damping: 24,
+      stiffness: 300,
+      delay: 0.05,
+    },
+  },
+};
+
+const sortDropdownVariants = {
+  hidden: { opacity: 0, y: -8, scale: 0.95 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { type: 'spring', damping: 24, stiffness: 400 },
+  },
+  exit: {
+    opacity: 0,
+    y: -8,
+    scale: 0.95,
+    transition: { duration: 0.15, ease: 'easeInOut' },
+  },
+};
 
 export default function Home() {
   const { t } = useTranslation();
@@ -131,7 +187,12 @@ export default function Home() {
       {/* ═══════════════════════════════════════════
           SEARCH BAR — Plush, inner-shadow, Apple Spotlight feel
           ═══════════════════════════════════════════ */}
-      <div className="flex gap-2.5">
+      <motion.div
+        variants={filterBarVariants}
+        initial="hidden"
+        animate="visible"
+        className="flex gap-2.5"
+      >
         <div className="relative flex-1">
           <Search 
             className={clsx(
@@ -159,46 +220,65 @@ export default function Home() {
         
         {/* Sort toggle */}
         <div className="relative">
-          <button
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.92 }}
             onClick={() => setShowSort(!showSort)}
-            className="h-full aspect-square flex items-center justify-center bg-pill/40 hover:bg-pill rounded-2xl transition-all duration-200 ease-apple press text-labelTertiary hover:text-label"
+            className="h-full aspect-square flex items-center justify-center bg-pill/40 hover:bg-pill rounded-2xl transition-all duration-200 ease-apple text-labelTertiary hover:text-label"
           >
             <ArrowUpDown size={17} strokeWidth={2} />
-          </button>
+          </motion.button>
           
-          {showSort && (
-            <div className="absolute right-0 mt-2 w-52 bg-card rounded-2xl shadow-dropdownApple overflow-hidden z-20 py-1 animate-slide-up">
-              {sorts.map(sort => (
-                <button
-                  key={sort}
-                  onClick={() => { setActiveSort(sort); setShowSort(false); }}
-                  className={clsx(
-                    "w-full text-left px-4 py-3 text-[13px] font-medium transition-colors duration-150 flex items-center justify-between",
-                    activeSort === sort
-                      ? "text-blue bg-blue/5"
-                      : "text-label hover:bg-bg"
-                  )}
-                >
-                  <span>{t(`sort.${sort}`)}</span>
-                  {activeSort === sort && (
-                    <svg className="w-3.5 h-3.5 text-blue" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                  )}
-                </button>
-              ))}
-            </div>
-          )}
+          <AnimatePresence>
+            {showSort && (
+              <motion.div
+                variants={sortDropdownVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                className="absolute right-0 mt-2 w-52 bg-card rounded-2xl shadow-dropdownApple overflow-hidden z-20 py-1"
+              >
+                {sorts.map(sort => (
+                  <button
+                    key={sort}
+                    onClick={() => { setActiveSort(sort); setShowSort(false); }}
+                    className={clsx(
+                      "w-full text-left px-4 py-3 text-[13px] font-medium transition-colors duration-150 flex items-center justify-between",
+                      activeSort === sort
+                        ? "text-blue bg-blue/5"
+                        : "text-label hover:bg-bg"
+                    )}
+                  >
+                    <span>{t(`sort.${sort}`)}</span>
+                    {activeSort === sort && (
+                      <svg className="w-3.5 h-3.5 text-blue" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    )}
+                  </button>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-      </div>
+      </motion.div>
 
       {/* ═══════════════════════════════════════════
-          CATEGORY TOGGLES — iOS Control Center style
+          CATEGORY TOGGLES — iOS Control Center style with layout animation
           ═══════════════════════════════════════════ */}
-      <div className="flex overflow-x-auto no-scrollbar gap-2 pb-1 -mx-4 px-4 sm:-mx-6 sm:px-6 md:mx-0 md:px-0">
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ type: 'spring', damping: 24, stiffness: 300, delay: 0.12 }}
+        className="flex overflow-x-auto no-scrollbar gap-2 pb-1 -mx-4 px-4 sm:-mx-6 sm:px-6 md:mx-0 md:px-0"
+      >
         {categories.map(cat => (
-          <button
+          <motion.button
             key={cat}
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.93 }}
+            layout
+            transition={{ type: 'spring', damping: 20, stiffness: 350 }}
             onClick={() => setActiveCategory(cat)}
             className={clsx(
               "ios-segment whitespace-nowrap",
@@ -208,46 +288,72 @@ export default function Home() {
             )}
           >
             {t(`categories.${cat}`)}
-          </button>
+          </motion.button>
         ))}
-      </div>
+      </motion.div>
 
       {/* ═══════════════════════════════════════════
-          PRODUCT GRID — Bento Box / Asymmetric Masonry
-          First item = featured (span 2 cols on md+)
+          PRODUCT GRID — Staggered cascade entrance
           ═══════════════════════════════════════════ */}
       {loading ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
-          <div className="md:col-span-2 md:row-span-2">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4"
+        >
+          <motion.div variants={itemVariants} className="md:col-span-2 md:row-span-2">
             <ListingSkeleton featured />
-          </div>
-          {[...Array(7)].map((_, i) => <ListingSkeleton key={i} />)}
-        </div>
+          </motion.div>
+          {[...Array(7)].map((_, i) => (
+            <motion.div key={i} variants={itemVariants}>
+              <ListingSkeleton />
+            </motion.div>
+          ))}
+        </motion.div>
       ) : listings.length > 0 ? (
         <>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 auto-rows-fr">
-            {listings.map((item, index) => {
-              // First item gets featured treatment on desktop
-              const isFeatured = index === 0;
-              return (
-                <div
-                  key={item.id}
-                  className={clsx(
-                    isFeatured && "md:col-span-2 md:row-span-2"
-                  )}
-                >
-                  <ListingCard item={item} featured={isFeatured} />
-                </div>
-              );
-            })}
-          </div>
+          <AnimatePresence mode="popLayout">
+            <motion.div
+              key={activeCategory + activeSort}
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              exit={{ opacity: 0, y: -12, transition: { duration: 0.18 } }}
+              className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 auto-rows-fr"
+            >
+              {listings.map((item, index) => {
+                // First item gets featured treatment on desktop
+                const isFeatured = index === 0;
+                return (
+                  <motion.div
+                    key={item.id}
+                    variants={itemVariants}
+                    layout
+                    className={clsx(
+                      isFeatured && "md:col-span-2 md:row-span-2"
+                    )}
+                  >
+                    <ListingCard item={item} featured={isFeatured} />
+                  </motion.div>
+                );
+              })}
+            </motion.div>
+          </AnimatePresence>
 
           {hasMore && (
-            <div className="flex justify-center mt-4 mb-2">
-              <button
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, type: 'spring', damping: 20, stiffness: 200 }}
+              className="flex justify-center mt-4 mb-2"
+            >
+              <motion.button
+                whileHover={{ scale: 1.04, y: -1 }}
+                whileTap={{ scale: 0.96 }}
                 onClick={() => fetchListings(true)}
                 disabled={loadingMore}
-                className="bg-card hover:bg-cardHover text-labelSecondary px-8 py-3 rounded-full text-[13px] font-semibold transition-all duration-200 ease-apple disabled:opacity-40 shadow-card hover:shadow-float press"
+                className="bg-card hover:bg-cardHover text-labelSecondary px-8 py-3 rounded-full text-[13px] font-semibold transition-all duration-200 ease-apple disabled:opacity-40 shadow-card hover:shadow-float"
               >
                 {loadingMore ? (
                   <span className="flex items-center gap-2">
@@ -257,8 +363,8 @@ export default function Home() {
                     </svg>
                   </span>
                 ) : t('home.loadMore')}
-              </button>
-            </div>
+              </motion.button>
+            </motion.div>
           )}
         </>
       ) : (

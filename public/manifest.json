@@ -1,10 +1,10 @@
 {
-  "name": "Gadorm",
-  "short_name": "Gadorm",
+  "name": "AktauDorm",
+  "short_name": "AktauDorm",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0B0D17",
-  "theme_color": "#0B0D17",
+  "background_color": "#F4F4F7",
+  "theme_color": "#F4F4F7",
   "description": "Student marketplace for Aktau dormitories.",
   "icons": [
     {

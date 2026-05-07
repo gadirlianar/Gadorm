@@ -11,7 +11,7 @@
 
   html {
     scroll-behavior: smooth;
-    background-color: #F2F2F7;
+    background-color: #F4F4F7;
   }
 
   body {
@@ -96,5 +96,35 @@
   /* Bouncy press */
   .press {
     @apply active:scale-[0.96] transition-transform duration-150 ease-bounce-in;
+  }
+
+  /* CTA pulsing glow — subtle, premium idle animation */
+  .cta-glow {
+    animation: ctaPulse 2.8s ease-in-out infinite;
+  }
+
+  @keyframes ctaPulse {
+    0%, 100% {
+      box-shadow:
+        0 2px 8px -2px rgba(0, 122, 255, 0.25),
+        0 0 0 0 rgba(0, 122, 255, 0);
+    }
+    50% {
+      box-shadow:
+        0 4px 20px -4px rgba(0, 122, 255, 0.4),
+        0 0 24px -4px rgba(0, 122, 255, 0.15);
+    }
+  }
+
+  .cta-glow:hover {
+    animation: none;
+    box-shadow:
+      0 6px 28px -4px rgba(0, 122, 255, 0.5),
+      0 0 32px -4px rgba(0, 122, 255, 0.2);
+  }
+
+  /* Safe area for iPhone bottom bar */
+  .safe-area-bottom {
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
   }
 }

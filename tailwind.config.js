@@ -8,7 +8,7 @@ export default {
     extend: {
       colors: {
         // iOS-inspired palette
-        bg: '#F2F2F7',              // iOS system gray 6
+        bg: '#F4F4F7',              // Premium off-white
         card: '#FFFFFF',
         cardHover: '#F9F9FB',
         pill: '#E5E5EA',            // iOS system gray 5
@@ -30,7 +30,7 @@ export default {
         orange: '#FF9500',          // iOS orange
         
         // Extended
-        groupedBg: '#F2F2F7',
+        groupedBg: '#F4F4F7',
         fillTertiary: '#767680',
       },
       fontFamily: {

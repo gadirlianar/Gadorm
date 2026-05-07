@@ -1,5 +1,6 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion';
 import { Plus } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import LanguageSwitcher from './LanguageSwitcher';
@@ -23,7 +24,12 @@ export default function Layout() {
       {/* ═══════════════════════════════════════════
           FLOATING PILL HEADER — Apple Dynamic Island vibes
           ═══════════════════════════════════════════ */}
-      <header className="sticky top-0 z-50 px-4 sm:px-6 pt-3">
+      <motion.header
+        initial={{ y: -30, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ type: 'spring', damping: 22, stiffness: 280, delay: 0.05 }}
+        className="sticky top-0 z-50 px-4 sm:px-6 pt-3"
+      >
         <nav 
           className={`
             glass-nav mx-auto max-w-3xl
@@ -38,28 +44,39 @@ export default function Layout() {
           `}
         >
           {/* Logo — minimal, confident */}
-          <Link to="/" className="flex items-center gap-2 press">
-            <span className="text-[22px] leading-none">🏫</span>
-            <span className="font-bold text-[17px] tracking-[-0.02em] text-label">
-              Gadorm
-            </span>
+          <Link to="/" className="flex items-center gap-2">
+            <motion.div
+              whileHover={{ scale: 1.06, rotate: -3 }}
+              whileTap={{ scale: 0.92 }}
+              className="flex items-center gap-2"
+            >
+              <span className="text-[22px] leading-none">🏫</span>
+              <span className="font-bold text-[17px] tracking-[-0.02em] text-label">
+                AktauDorm
+              </span>
+            </motion.div>
           </Link>
 
           {/* Right cluster */}
           <div className="flex items-center gap-2">
             <LanguageSwitcher />
 
-            {/* Desktop CTA — pill button */}
-            <Link
-              to="/post"
-              className="hidden md:flex items-center gap-1.5 bg-blue hover:bg-blueHover text-white px-4 py-2 rounded-full text-[13px] font-semibold transition-all duration-200 ease-apple press shadow-pill"
+            {/* Desktop CTA — pulsing glow pill button */}
+            <motion.div
+              whileHover={{ scale: 1.06 }}
+              whileTap={{ scale: 0.93 }}
             >
-              <Plus size={15} strokeWidth={2.5} />
-              {t('header.postItem')}
-            </Link>
+              <Link
+                to="/post"
+                className="hidden md:flex items-center gap-1.5 bg-blue hover:bg-blueHover text-white px-4 py-2 rounded-full text-[13px] font-semibold transition-all duration-200 ease-apple shadow-pill cta-glow"
+              >
+                <Plus size={15} strokeWidth={2.5} />
+                {t('header.postItem')}
+              </Link>
+            </motion.div>
           </div>
         </nav>
-      </header>
+      </motion.header>
 
       {/* ═══════════════════════════════════════════
           MAIN CONTENT
@@ -69,26 +86,47 @@ export default function Layout() {
       </main>
 
       {/* ═══════════════════════════════════════════
-          MOBILE FAB — Floating, bouncy, magnetic
+          MOBILE FAB — Floating, bouncy, magnetic with pulse glow
           ═══════════════════════════════════════════ */}
       <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
-        <Link
-          to="/post"
-          className="flex items-center gap-2 bg-blue text-white pl-5 pr-6 py-3.5 rounded-full font-semibold text-[15px] shadow-fab press transition-all duration-200 ease-apple hover:bg-blueHover"
+        <motion.div
+          initial={{ y: 60, opacity: 0, scale: 0.7 }}
+          animate={{ y: 0, opacity: 1, scale: 1 }}
+          transition={{ type: 'spring', damping: 14, stiffness: 200, delay: 0.5 }}
+          whileHover={{ scale: 1.08 }}
+          whileTap={{ scale: 0.9 }}
         >
-          <Plus size={20} strokeWidth={2.5} />
-          {t('header.postItem')}
-        </Link>
+          <Link
+            to="/post"
+            className="flex items-center gap-2 bg-blue text-white pl-5 pr-6 py-3.5 rounded-full font-semibold text-[15px] shadow-fab transition-all duration-200 ease-apple hover:bg-blueHover cta-glow"
+          >
+            <Plus size={20} strokeWidth={2.5} />
+            {t('header.postItem')}
+          </Link>
+        </motion.div>
       </div>
 
       {/* ═══════════════════════════════════════════
           FOOTER — Design agency signature
           ═══════════════════════════════════════════ */}
-      <footer className="mt-auto py-10">
-        <p className="text-center text-[10px] font-medium tracking-[0.25em] uppercase text-labelTertiary/60 select-none">
-          Anar Gadirli
+      <motion.footer
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.8, duration: 0.6 }}
+        className="mt-auto py-12"
+      >
+        <p className="text-center text-xl font-bold tracking-wide text-labelTertiary/70">
+          Built by{' '}
+          <a
+            href="https://wa.me/994107171255"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-labelSecondary hover:text-blue-600 transition-all duration-300 ease-apple hover:underline underline-offset-4 decoration-blue-600/50 decoration-2 cursor-pointer"
+          >
+            Anar Gadirli
+          </a>
         </p>
-      </footer>
+      </motion.footer>
     </div>
   );
 }
